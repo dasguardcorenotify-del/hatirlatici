@@ -1,6 +1,7 @@
 import datetime as dt
 import json
 import os
+import stat
 import tempfile
 import unittest
 from pathlib import Path
@@ -38,6 +39,138 @@ class CoreTests(unittest.TestCase):
             dt.datetime.now()
             .replace(second=0, microsecond=0)
             + dt.timedelta(hours=2)
+        )
+
+    def test_lock_files_are_owner_only(self):
+        for path in (
+            core.MAIL_LOCK,
+            core.PC_LOCK,
+            core.HISTORY_LOCK,
+        ):
+            with self.subTest(path=path.name):
+                self.assertTrue(path.is_file())
+                self.assertEqual(
+                    stat.S_IMODE(
+                        path.stat().st_mode
+                    ),
+                    0o600,
+                )
+                self.assertEqual(
+                    stat.S_IMODE(
+                        path.parent.stat().st_mode
+                    ),
+                    0o700,
+                )
+
+    def test_exclusive_repairs_permissive_lock_mode(self):
+        lock_path = (
+            Path(self.temp.name)
+            / "locks"
+            / "repair.lock"
+        )
+        lock_path.parent.mkdir(
+            parents=True,
+            exist_ok=True,
+        )
+        lock_path.touch(
+            mode=0o644,
+        )
+        os.chmod(
+            lock_path,
+            0o644,
+        )
+
+        with core.exclusive(lock_path):
+            self.assertEqual(
+                stat.S_IMODE(
+                    lock_path.stat().st_mode
+                ),
+                0o600,
+            )
+            self.assertEqual(
+                stat.S_IMODE(
+                    lock_path.parent.stat().st_mode
+                ),
+                0o700,
+            )
+
+    @unittest.skipUnless(
+        hasattr(os, "O_NOFOLLOW"),
+        "O_NOFOLLOW is required for this Linux hardening test",
+    )
+    def test_exclusive_rejects_symlink_lock(self):
+        target = (
+            Path(self.temp.name)
+            / "symlink-target"
+        )
+        target.write_text(
+            "unchanged",
+            encoding="utf-8",
+        )
+        link = (
+            Path(self.temp.name)
+            / "locks"
+            / "symlink.lock"
+        )
+        link.parent.mkdir(
+            parents=True,
+            exist_ok=True,
+        )
+        link.symlink_to(target)
+
+        with self.assertRaises(OSError):
+            with core.exclusive(link):
+                pass
+
+        self.assertEqual(
+            target.read_text(
+                encoding="utf-8"
+            ),
+            "unchanged",
+        )
+
+    def test_exclusive_rejects_hardlinked_lock(self):
+        target = (
+            Path(self.temp.name)
+            / "hardlink-target"
+        )
+        target.write_text(
+            "unchanged",
+            encoding="utf-8",
+        )
+        os.chmod(
+            target,
+            0o644,
+        )
+        link = (
+            Path(self.temp.name)
+            / "locks"
+            / "hardlink.lock"
+        )
+        link.parent.mkdir(
+            parents=True,
+            exist_ok=True,
+        )
+        os.link(
+            target,
+            link,
+        )
+
+        with self.assertRaises(OSError):
+            with core.exclusive(link):
+                pass
+
+        self.assertEqual(
+            target.read_text(
+                encoding="utf-8"
+            ),
+            "unchanged",
+        )
+        self.assertEqual(
+            stat.S_IMODE(
+                target.stat().st_mode
+            ),
+            0o644,
         )
 
     def test_channels(self):

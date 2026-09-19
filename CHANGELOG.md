@@ -18,6 +18,7 @@ All notable public-release changes are documented here.
 - XDG- and Flatpak-scoped runtime paths with no broad home or host filesystem permission
 - TLS certificate verification and TLS 1.2 minimum for SMTP
 - Pinned offline source builds for bundled dependencies; architecture-specific Python wheels removed
+- App-private lock files are owner-only and protected against symlink and hard-link substitution
 
 ### Release notes
 

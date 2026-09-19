@@ -8,6 +8,7 @@ import fcntl
 import json
 import os
 import shutil
+import stat
 import tempfile
 import uuid
 from contextlib import contextmanager
@@ -127,11 +128,63 @@ def _localized_core_text(key: str) -> str:
 
 @contextmanager
 def exclusive(path: Path) -> Iterator[None]:
-    path.parent.mkdir(parents=True, exist_ok=True)
+    path.parent.mkdir(
+        parents=True,
+        exist_ok=True,
+        mode=0o700,
+    )
 
-    with path.open("a+") as handle:
+    directory_flags = (
+        os.O_RDONLY
+        | os.O_DIRECTORY
+        | os.O_CLOEXEC
+        | os.O_NOFOLLOW
+    )
+    directory_fd = os.open(
+        path.parent,
+        directory_flags,
+    )
+
+    descriptor = None
+
+    try:
+        os.fchmod(
+            directory_fd,
+            0o700,
+        )
+        descriptor = os.open(
+            path.name,
+            (
+                os.O_RDWR
+                | os.O_CREAT
+                | os.O_CLOEXEC
+                | os.O_NOFOLLOW
+            ),
+            0o600,
+            dir_fd=directory_fd,
+        )
+        metadata = os.fstat(
+            descriptor
+        )
+
+        if not stat.S_ISREG(
+            metadata.st_mode
+        ):
+            raise OSError(
+                "Lock path is not a regular file"
+            )
+
+        if metadata.st_nlink != 1:
+            raise OSError(
+                "Lock file has an unsafe hard-link count"
+            )
+
+        os.fchmod(
+            descriptor,
+            0o600,
+        )
         fcntl.flock(
-            handle.fileno(),
+            descriptor,
             fcntl.LOCK_EX,
         )
 
@@ -139,9 +192,17 @@ def exclusive(path: Path) -> Iterator[None]:
             yield
         finally:
             fcntl.flock(
-                handle.fileno(),
+                descriptor,
                 fcntl.LOCK_UN,
             )
+    finally:
+        if descriptor is not None:
+            os.close(
+                descriptor
+            )
+        os.close(
+            directory_fd
+        )
 
 
 def parse_dt(value: str) -> Optional[dt.datetime]:
