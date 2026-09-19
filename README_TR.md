@@ -4,7 +4,7 @@ Hatırlatıcı, Linux için yerel öncelikli bir hatırlatma uygulamasıdır. Ha
 
 2.0.0 sürümü İngilizce, Türkçe, Almanca, İspanyolca ve Rusça arayüzleri destekler.
 
-> Proje durumu (2026-08-21): genel kullanıma açık sürüm hazırlığı devam ediyor. Depo, açıklamalı sürüm etiketi, kurulabilir paket ve bağış adresi yayımdan önce doğrulanmalıdır. Sentetik verili altı mağaza ekran görüntüsü görsel ve gizlilik incelemesinden geçmiştir. Projede yapay zekâ yardımıyla üretilmiş kod ve belgeler bulunur; bu kaynak bilgisi gizlenmemelidir.
+> Proje durumu (2026-09-19): dürüst yerel upstream geçmişi oluşturuldu. Bu aday Freedesktop 26.08'i hedefler; temiz x86_64 derlemesi, public upstream yayını, sürüm etiketi/varlıkları, aarch64 doğrulaması ve Flathub incelemesi henüz tamamlanmamıştır. Yapay zekâ yardımı [AI_ASSISTANCE_DISCLOSURE.md](AI_ASSISTANCE_DISCLOSURE.md) içinde, kaynak rekonstrüksiyonu [docs/PROVENANCE.md](docs/PROVENANCE.md) içinde açıklanmıştır.
 
 ## Özellikler
 
@@ -41,7 +41,7 @@ Kimlik bilgileri yerel olarak şifrelenir. Normal çalışmada yazdırılmaz; an
 
 ## Kaynaktan derleme
 
-Flatpak, `flatpak-builder` ve Flathub uzak deposunu kurduktan sonra Freedesktop 25.08 çalışma zamanını, SDK'yı ve Rust SDK uzantısını kurun. Qt 6.11.1, PyQt6 ve diğer Python bağımlılıkları, sabitlenmiş ve özetleri doğrulanan kaynak dağıtımlarından derlenir; mimariye özgü Python wheel dosyaları kullanılmaz. Ayrıntılı komutlar ve geliştirme manifesti için İngilizce [README.md](README.md) belgesine bakın.
+Flatpak, `flatpak-builder` ve Flathub uzak deposunu kurduktan sonra Freedesktop 26.08 çalışma zamanını, SDK'yı ve Rust SDK uzantısını kurun. Qt 6.11.1, PyQt6 ve diğer Python bağımlılıkları, sabitlenmiş ve özetleri doğrulanan kaynak dağıtımlarından derlenir; mimariye özgü Python wheel dosyaları kullanılmaz. Ayrıntılı komutlar ve geliştirme manifesti için İngilizce [README.md](README.md) belgesine bakın.
 
 Yerel kaynak ağacında yalnızca geliştirme amacıyla `io.github.dasguardcorenotify_del.hatirlatici.Devel.yml` kullanılır. Dağıtım manifesti, sabitlenmiş ve SHA-256 ile doğrulanan sürüm kaynak arşivini kullanır.
 

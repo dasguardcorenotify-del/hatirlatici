@@ -4,7 +4,7 @@ Hatırlatıcı is a local-first reminder application for Linux. It schedules rem
 
 Version 2.0.0 supports English, Turkish, German, Spanish, and Russian.
 
-> Project status (2026-09-19): the source provenance has been verified and an honest upstream Git repository is being established. Runtime upgrade, clean multi-architecture build, public release assets, and Flathub review remain open. AI assistance is disclosed in [AI_ASSISTANCE_DISCLOSURE.md](AI_ASSISTANCE_DISCLOSURE.md), and source history reconstruction is documented in [docs/PROVENANCE.md](docs/PROVENANCE.md).
+> Project status (2026-09-19): the honest local upstream history is established. This candidate targets Freedesktop 26.08; clean x86_64 build, public upstream publication, tagged release assets, aarch64 verification, and Flathub review remain open. AI assistance is disclosed in [AI_ASSISTANCE_DISCLOSURE.md](AI_ASSISTANCE_DISCLOSURE.md), and source history reconstruction is documented in [docs/PROVENANCE.md](docs/PROVENANCE.md).
 
 ## Features
 
@@ -46,9 +46,9 @@ Install Flatpak, `flatpak-builder`, and the Flathub remote, then install the mai
 
 ```bash
 flatpak install --user flathub \
-  org.freedesktop.Platform//25.08 \
-  org.freedesktop.Sdk//25.08 \
-  org.freedesktop.Sdk.Extension.rust-stable//25.08
+  org.freedesktop.Platform//26.08 \
+  org.freedesktop.Sdk//26.08 \
+  org.freedesktop.Sdk.Extension.rust-stable//26.08
 ```
 
 For a checked-out source tree, use the explicitly development-only manifest:
@@ -60,7 +60,7 @@ flatpak-builder --user --install --force-clean \
   io.github.dasguardcorenotify_del.hatirlatici.Devel.yml
 ```
 
-The canonical production manifest is `io.github.dasguardcorenotify_del.hatirlatici.yml`. It consumes the immutable, hashed `hatirlatici-2.0.0.tar.xz` release asset and is expected to build without network access in the build sandbox. Qt 6.11.1, PyQt6, and the other Python dependencies are built from pinned, hashed source distributions on the Freedesktop 25.08 runtime; no architecture-specific Python wheels are used.
+The canonical production manifest is `io.github.dasguardcorenotify_del.hatirlatici.yml`. It consumes the immutable, hashed `hatirlatici-2.0.0.tar.xz` release asset and is expected to build without network access in the build sandbox. Qt 6.11.1, PyQt6, and the other Python dependencies are built from pinned, hashed source distributions on the Freedesktop 26.08 runtime; no architecture-specific Python wheels are used.
 
 ## Data, privacy, and security
 

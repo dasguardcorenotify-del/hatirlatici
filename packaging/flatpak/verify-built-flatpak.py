@@ -238,7 +238,7 @@ def verify(build_dir: Path) -> list[str]:
 
     require(metadata.get("Application", "name", fallback="") == APP_ID, "application ID mismatch", errors)
     runtime = metadata.get("Application", "runtime", fallback="")
-    require(runtime.startswith("org.freedesktop.Platform/") and runtime.endswith("/25.08"), "runtime mismatch", errors)
+    require(runtime.startswith("org.freedesktop.Platform/") and runtime.endswith("/26.08"), "runtime mismatch", errors)
     require(values(metadata, "Context", "shared") == {"ipc", "network"}, "unexpected shared permissions", errors)
     # Flatpak serializes fallback-x11 as both x11 and the fallback marker. The
     # latter makes X11 unavailable when the Wayland socket is usable.
@@ -254,6 +254,23 @@ def verify(build_dir: Path) -> list[str]:
     actual_session_bus = dict(metadata.items("Session Bus Policy")) if metadata.has_section("Session Bus Policy") else {}
     require(actual_session_bus == expected_session_bus, "unexpected session-bus policy", errors)
     require(not metadata.has_section("System Bus Policy"), "unexpected system-bus policy", errors)
+
+    python_site_candidates = sorted(files.glob("lib/python3.*/site-packages"))
+    require(
+        len(python_site_candidates) == 1,
+        f"Python site-packages contract mismatch: {python_site_candidates!r}",
+        errors,
+    )
+    if len(python_site_candidates) == 1:
+        site_packages = python_site_candidates[0]
+        python_dir = site_packages.parent.name
+        python_match = re.fullmatch(r"python(\d+)\.(\d+)", python_dir)
+        require(python_match is not None, f"unexpected Python runtime directory: {python_dir}", errors)
+        python_abi = "".join(python_match.groups()) if python_match is not None else "INVALID"
+    else:
+        site_packages = files / "lib/python-invalid/site-packages"
+        python_dir = "python-invalid"
+        python_abi = "INVALID"
 
     required_files = (
         "lib/libQt6Core.so.6.11.1",
@@ -273,30 +290,29 @@ def verify(build_dir: Path) -> list[str]:
         "plugins/xcbglintegrations/libqxcb-glx-integration.so",
         "plugins/iconengines/libqsvgicon.so",
         "plugins/imageformats/libqsvg.so",
-        "lib/python3.13/site-packages/PyQt6/QtCore.abi3.so",
-        "lib/python3.13/site-packages/PyQt6/QtDBus.abi3.so",
-        "lib/python3.13/site-packages/PyQt6/QtGui.abi3.so",
-        "lib/python3.13/site-packages/PyQt6/QtNetwork.abi3.so",
-        "lib/python3.13/site-packages/PyQt6/QtWidgets.abi3.so",
+        f"lib/{python_dir}/site-packages/PyQt6/QtCore.abi3.so",
+        f"lib/{python_dir}/site-packages/PyQt6/QtDBus.abi3.so",
+        f"lib/{python_dir}/site-packages/PyQt6/QtGui.abi3.so",
+        f"lib/{python_dir}/site-packages/PyQt6/QtNetwork.abi3.so",
+        f"lib/{python_dir}/site-packages/PyQt6/QtWidgets.abi3.so",
     )
     for relative in required_files:
         require((files / relative).is_file(), f"missing runtime artifact: {relative}", errors)
 
-    pyqt_root = files / "lib/python3.13/site-packages/PyQt6"
+    pyqt_root = site_packages / "PyQt6"
     actual_bindings = {path.stem.split(".", 1)[0] for path in pyqt_root.glob("Qt*.abi3.so")}
     expected_bindings = {"QtCore", "QtDBus", "QtGui", "QtNetwork", "QtWidgets"}
     require(actual_bindings == expected_bindings, f"unexpected PyQt binding set: {sorted(actual_bindings)!r}", errors)
     for binding in expected_bindings:
         verify_elf_hardening(pyqt_root / f"{binding}.abi3.so", errors)
 
-    site_packages = files / "lib/python3.13/site-packages"
     native_extension_contract = (
-        "PyQt6/sip.cpython-313-*.so",
-        "_cffi_backend.cpython-313-*.so",
-        "cairo/_cairo.cpython-313-*.so",
+        f"PyQt6/sip.cpython-{python_abi}-*.so",
+        f"_cffi_backend.cpython-{python_abi}-*.so",
+        f"cairo/_cairo.cpython-{python_abi}-*.so",
         "cryptography/hazmat/bindings/_rust.abi3.so",
-        "gi/_gi.cpython-313-*.so",
-        "gi/_gi_cairo.cpython-313-*.so",
+        f"gi/_gi.cpython-{python_abi}-*.so",
+        f"gi/_gi_cairo.cpython-{python_abi}-*.so",
     )
     for pattern in native_extension_contract:
         matches = list(site_packages.glob(pattern))
@@ -319,12 +335,13 @@ def verify(build_dir: Path) -> list[str]:
         "lib/libQt6Multimedia*",
         "qml/QtWayland/Compositor/**",
         "plugins/wayland-graphics-integration-client/*server*.so",
-        "lib/python3.13/site-packages/PyQt6/QtWebEngine*",
-        "lib/python3.13/site-packages/PyQt6/QtMultimedia*",
+        "lib/python*/site-packages/PyQt6/QtWebEngine*",
+        "lib/python*/site-packages/PyQt6/QtMultimedia*",
         "include/**",
         "lib/cmake/**",
         "lib/pkgconfig/**",
         "lib64/pkgconfig/**",
+        "lib/python*/site-packages/packaging*",
         "lib/python*/site-packages/cairo/include/**",
         "**/*.a",
         "**/*.la",
@@ -350,6 +367,9 @@ def verify(build_dir: Path) -> list[str]:
         "PyQt6-sip/LICENSE",
         "sip/LICENSE",
         "PyQt-builder/LICENSE",
+        "packaging/LICENSE",
+        "packaging/LICENSE.APACHE",
+        "packaging/LICENSE.BSD",
         "ply/README.md",
         "pycairo/COPYING",
         "pycairo/COPYING-LGPL-2.1",

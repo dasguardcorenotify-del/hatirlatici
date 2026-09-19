@@ -62,10 +62,11 @@
   <url type="bugtracker">https://github.com/dasguardcorenotify-del/hatirlatici/issues</url>
   <url type="vcs-browser">https://github.com/dasguardcorenotify-del/hatirlatici</url>
 
-  <supports>
-    <control>pointing</control>
+  <requires>
     <control>keyboard</control>
-  </supports>
+    <control>pointing</control>
+    <display_length compare="ge">768</display_length>
+  </requires>
 
   <screenshots>
     <screenshot type="default">
@@ -118,13 +119,19 @@
     </screenshot>
   </screenshots>
 
+  <branding>
+    <color type="primary" scheme_preference="light">#0E7C86</color>
+    <color type="primary" scheme_preference="dark">#20C7C9</color>
+  </branding>
+
   <content_rating type="oars-1.1" />
 
   <releases>
     <release version="2.0.0" date="2026-08-21">
+      <url type="details">https://github.com/dasguardcorenotify-del/hatirlatici/releases/tag/v2.0.0</url>
       <description>
         <p>First public Linux release with local reminders, desktop notifications, optional SMTP delivery, secure local credential storage, and five interface languages.</p>
-        <p>The Flatpak uses the Freedesktop 25.08 runtime with pinned source builds of Qt 6.11.1 and PyQt6.</p>
+        <p>The Flatpak uses the Freedesktop 26.08 runtime with pinned source builds of Qt 6.11.1 and PyQt6.</p>
       </description>
     </release>
   </releases>

@@ -421,7 +421,7 @@ def packaging_gate() -> None:
         fail("production manifest release asset URL does not match version/tag contract")
     runtime_contract = (
         "runtime: org.freedesktop.Platform",
-        "runtime-version: '25.08'",
+        "runtime-version: '26.08'",
         "sdk: org.freedesktop.Sdk",
         "qtbase-everywhere-src-6.11.1.tar.xz",
         "qtwayland-everywhere-src-6.11.1.tar.xz",
@@ -435,6 +435,8 @@ def packaging_gate() -> None:
         "FLATPAK_SDK_FORTIFY_SOURCE=3",
         "-DFEATURE_sql=OFF",
         "pyqt6-6.11.0.tar.gz",
+        "packaging-26.3.tar.gz",
+        "94edc256424af38762eb31306eed28beb9f0efc50a8837492c9d6fd6004aed79",
     )
     for marker in runtime_contract:
         if marker not in production or marker not in development:
@@ -456,6 +458,7 @@ def packaging_gate() -> None:
             fail(f"{name} does not remove the unused Qt OpenGL Widgets library")
         for cleanup_entry in (
             "- /lib64/pkgconfig",
+            "- /lib/python*/site-packages/packaging*",
             "- /lib/python*/site-packages/cairo/include",
             "- /bin/cffi-gen-src",
             "- /bin/pylupdate6",
@@ -516,6 +519,12 @@ def packaging_gate() -> None:
         "<project_license>GPL-3.0-or-later</project_license>",
         f'<release version="{VERSION}" date="2026-08-21">',
         f'<launchable type="desktop-id">{APP_ID}.desktop</launchable>',
+        '<color type="primary" scheme_preference="light">#0E7C86</color>',
+        '<color type="primary" scheme_preference="dark">#20C7C9</color>',
+        '<control>keyboard</control>',
+        '<control>pointing</control>',
+        '<display_length compare="ge">768</display_length>',
+        '<url type="details">https://github.com/dasguardcorenotify-del/hatirlatici/releases/tag/v2.0.0</url>',
     )
     for value in required_metadata:
         if value not in metadata:
@@ -535,7 +544,7 @@ def packaging_gate() -> None:
         fail("Flatpak launcher inherits an untrusted Python module path")
 
     app_identity = read_text(ROOT / "app_identity.py")
-    if '"org.freedesktop.Platform"' not in app_identity or '"25.08"' not in app_identity:
+    if '"org.freedesktop.Platform"' not in app_identity or '"26.08"' not in app_identity:
         fail("application runtime identity does not match the production manifest")
 
 

@@ -45,5 +45,5 @@ FLATPAK_RUNTIME = (
 )
 
 FLATPAK_RUNTIME_VERSION = (
-    "25.08"
+    "26.08"
 )

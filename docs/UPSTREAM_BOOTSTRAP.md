@@ -12,3 +12,11 @@ The reconstructed commits were created on the actual bootstrap date. Their commi
 4. `35d31f7002c969cd2b04677531b472b2cecfb341` — import: add current verified 2.0.0 source (Git tree `24c448618efafe4412b25455131ffe77b0d0bb97`).
 
 The fourth reconstruction commit matches the verified canonical source tree before provenance/disclosure documentation was added.
+
+## F3-R3 continuation
+
+This packaging continuation migrates the candidate to Freedesktop 26.08, strengthens desktop AppStream metadata, and requires a clean, reproducible x86_64 source build before any public remote is added. The build evidence is kept outside the immutable release source tree.
+
+## F3-R3 source-build dependency closure
+
+Freedesktop 26.08 supplies Python 3.14. SIP 6.16.1 imports `packaging.markers` during the PyQt source build, so the official packaging 26.3 source distribution is pinned as a build-only module. Its license texts remain installed while the Python package itself is removed from the exported runtime.

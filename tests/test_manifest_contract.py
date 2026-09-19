@@ -90,7 +90,7 @@ class ManifestContractTests(unittest.TestCase):
 
     def test_dependency_version_drift_rejected(self):
         production = self.write_pair()
-        (self.root / mc.PRODUCTION_NAME).write_text(production.replace("'25.08'", "'other'", 1))
+        (self.root / mc.PRODUCTION_NAME).write_text(production.replace("'26.08'", "'other'", 1))
         with self.assertRaises(mc.ContractError):
             mc.check_pair(self.root)
 

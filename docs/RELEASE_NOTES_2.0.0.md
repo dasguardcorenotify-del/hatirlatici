@@ -9,7 +9,7 @@ Hatırlatıcı is a local-first Linux reminder application with desktop, optiona
 - Optional native Python SMTP with certificate verification and TLS 1.2 or newer
 - Secret Portal-backed AES-256-GCM credential storage
 - Local reminder history, recurrence, catch-up, leasing, system-tray, and single-instance behavior
-- Freedesktop 25.08 Flatpak with Qt 6.11.1, PyQt6 6.11.0, and Python dependencies built from pinned source archives
+- Freedesktop 26.08 Flatpak with Qt 6.11.1, PyQt6 6.11.0, and Python dependencies built from pinned source archives
 - No analytics, advertising, tracking, cloud account, broad home access, host service, `notify-send`, or `msmtp` dependency
 
 ## Install the direct bundle

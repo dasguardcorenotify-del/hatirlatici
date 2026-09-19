@@ -80,7 +80,7 @@ def _attest_flatpak() -> None:
     runtime = info.get("Application", "runtime", fallback="")
     if not (
         runtime.startswith("org.freedesktop.Platform/")
-        and runtime.endswith("/25.08")
+        and runtime.endswith("/26.08")
     ):
         raise RuntimeError("unexpected Flatpak runtime identity")
     if not (
@@ -129,7 +129,7 @@ def _run_isolated(real_config_root: Path, isolated_root: Path) -> int:
         app_identity.APP_ID != APP_ID
         or app_identity.APP_VERSION != APP_VERSION
         or app_identity.FLATPAK_RUNTIME != "org.freedesktop.Platform"
-        or app_identity.FLATPAK_RUNTIME_VERSION != "25.08"
+        or app_identity.FLATPAK_RUNTIME_VERSION != "26.08"
     ):
         raise RuntimeError("installed release identity contract mismatch")
     if runtime_config.config_dir().resolve() != copied_config_root.resolve():

@@ -3,7 +3,7 @@
 # io.github.dasguardcorenotify_del.hatirlatici.yml instead.
 id: io.github.dasguardcorenotify_del.hatirlatici
 runtime: org.freedesktop.Platform
-runtime-version: '25.08'
+runtime-version: '26.08'
 sdk: org.freedesktop.Sdk
 sdk-extensions:
   - org.freedesktop.Sdk.Extension.rust-stable
@@ -54,6 +54,7 @@ cleanup:
   - /bin/pyuic6
   - /bin/sip-install
   - /lib/python*/site-packages/ply*
+  - /lib/python*/site-packages/packaging*
   - /lib/python*/site-packages/pyqt_builder*
   - /lib/python*/site-packages/pyqtbuild*
   - /lib/python*/site-packages/sip-*.dist-info
@@ -193,6 +194,25 @@ modules:
       - type: archive
         url: https://files.pythonhosted.org/packages/e5/69/882ee5c9d017149285cab114ebeab373308ef0f874fcdac9beb90e0ac4da/ply-3.11.tar.gz
         sha256: 00c7c1aaa88358b9c765b6d3000c6eec0ba42abca5351b095321aef446081da3
+
+  # SIP 6.16 imports packaging.markers at build time. Freedesktop 26.08
+  # provides Python 3.14 but does not ship this PyPA helper in /app. Install
+  # the official source package directly, keep its licenses, and remove the
+  # build-only Python package from the exported runtime during cleanup.
+  - name: python-packaging-build-tool
+    buildsystem: simple
+    build-commands:
+      - >-
+        install -d /app/lib/python$(python3 -c 'import sys; print(f"{sys.version_info.major}.{sys.version_info.minor}")')/site-packages
+        && cp -a src/packaging /app/lib/python$(python3 -c 'import sys; print(f"{sys.version_info.major}.{sys.version_info.minor}")')/site-packages/
+      - python3 -c 'import packaging, packaging.markers; assert packaging.__version__ == "26.3"'
+      - install -Dm644 LICENSE /app/share/licenses/io.github.dasguardcorenotify_del.hatirlatici/packaging/LICENSE
+      - install -Dm644 LICENSE.APACHE /app/share/licenses/io.github.dasguardcorenotify_del.hatirlatici/packaging/LICENSE.APACHE
+      - install -Dm644 LICENSE.BSD /app/share/licenses/io.github.dasguardcorenotify_del.hatirlatici/packaging/LICENSE.BSD
+    sources:
+      - type: archive
+        url: https://files.pythonhosted.org/packages/7d/fa/3944b40b07da9ce895c0e6303a5ab7d53da063554f534556b134a54d6093/packaging-26.3.tar.gz
+        sha256: 94edc256424af38762eb31306eed28beb9f0efc50a8837492c9d6fd6004aed79
 
   - name: sip
     buildsystem: simple
