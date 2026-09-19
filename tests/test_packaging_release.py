@@ -147,6 +147,8 @@ class PackagingReleaseTests(unittest.TestCase):
             self.assertEqual(manifest.count("-DFEATURE_wayland_client=ON"), 1)
             self.assertEqual(manifest.count("-DFEATURE_wayland_server=OFF"), 2)
             self.assertIn("-DFEATURE_glibc_fortify_source=OFF", manifest)
+            self.assertEqual(manifest.count("-DFEATURE_vulkan=OFF"), 1)
+            self.assertEqual(manifest.count("--disabled-feature=PyQt_Vulkan"), 1)
             self.assertNotIn("-DQT_FEATURE_", manifest)
             self.assertIn("qtbase-client-only-contract", manifest)
             self.assertIn("QT_FEATURE_wayland_server=-1", manifest)

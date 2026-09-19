@@ -238,6 +238,7 @@ modules:
         --no-make
         --concatenate=1
         --disabled-feature=PyQt_OpenGL_ES2
+        --disabled-feature=PyQt_Vulkan
         --disabled-feature=PyQt_Permissions
         --qmake-setting="QMAKE_CFLAGS_RELEASE += ${CFLAGS} $(python3-config --includes)"
         --qmake-setting="QMAKE_CXXFLAGS_RELEASE += ${CXXFLAGS} $(python3-config --includes)"
