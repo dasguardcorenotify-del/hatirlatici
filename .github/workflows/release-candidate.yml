@@ -1,0 +1,80 @@
+name: Release candidate
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_ref:
+        description: Existing annotated v2.0.0 tag to verify
+        required: true
+        default: v2.0.0
+
+permissions:
+  contents: read
+
+jobs:
+  verify-production-source:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 300
+    container:
+      image: ghcr.io/flathub-infra/flatpak-github-actions:freedesktop-25.08
+      options: --privileged
+    steps:
+      - name: Check out exact release tag
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          ref: ${{ inputs.release_ref }}
+          fetch-depth: 0
+
+      - name: Download the exact immutable release source
+        run: |
+          test "${{ inputs.release_ref }}" = v2.0.0
+          curl --fail --location --retry 3 \
+            --output /tmp/hatirlatici-2.0.0.tar.xz \
+            https://github.com/dasguardcorenotify-del/hatirlatici/releases/download/v2.0.0/hatirlatici-2.0.0.tar.xz
+
+      - name: Enforce tag, archive, privacy, localization, and source contracts
+        run: |
+          python3 packaging/flatpak/release_gate.py \
+            --archive /tmp/hatirlatici-2.0.0.tar.xz \
+            --require-tag
+
+      - name: Lint exact-tag manifest and AppStream metadata
+        run: |
+          flatpak-builder-lint manifest io.github.dasguardcorenotify_del.hatirlatici.yml
+          flatpak-builder-lint appstream packaging/flatpak/io.github.dasguardcorenotify_del.hatirlatici.metainfo.xml
+
+      - name: Build immutable production source
+        uses: flatpak/flatpak-github-actions/flatpak-builder@d6f00ee69d6c8a7f875ec233e9a8ffea74c6ccef # v6
+        with:
+          manifest-path: io.github.dasguardcorenotify_del.hatirlatici.yml
+          bundle: hatirlatici-2.0.0.flatpak
+          build-bundle: true
+          upload-artifact: false
+          cache-key: hatirlatici-release-v2.0.0-${{ github.sha }}
+
+      - name: Validate release candidate and checksums
+        run: |
+          # qtbase-client-only-contract verifies the generated header during the
+          # build; the verifier rechecks its installed attestation and artifacts.
+          python3 packaging/flatpak/verify-built-flatpak.py \
+            --manifest io.github.dasguardcorenotify_del.hatirlatici.yml \
+            flatpak_app
+          flatpak-builder-lint builddir flatpak_app
+          flatpak-builder-lint repo repo
+          cp /tmp/hatirlatici-2.0.0.tar.xz .
+          sha256sum \
+            hatirlatici-2.0.0.tar.xz \
+            hatirlatici-2.0.0.flatpak \
+            io.github.dasguardcorenotify_del.hatirlatici.yml > SHA256SUMS
+
+      - name: Upload unsigned release candidate for owner review
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: hatirlatici-2.0.0-release-candidate
+          path: |
+            hatirlatici-2.0.0.tar.xz
+            hatirlatici-2.0.0.flatpak
+            io.github.dasguardcorenotify_del.hatirlatici.yml
+            SHA256SUMS
+          if-no-files-found: error
+          retention-days: 14

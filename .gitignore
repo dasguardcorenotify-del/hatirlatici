@@ -1,0 +1,67 @@
+# Python caches and environments
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+.venv/
+venv/
+env/
+
+# Flatpak and release build outputs
+.flatpak-builder/
+build/
+build-*/
+repo/
+dist/
+*.flatpak
+*.flatpakref
+*.flatpakrepo
+
+# Runtime state (real user data must never enter source control)
+hatirlatmalar.csv
+hatirlatmalar.csv.tmp
+pc_hatirlatmalar.csv
+hatirlatici_history.csv
+settings.json
+settings_v2.json
+credentials*
+*credential*.json
+*.sqlite
+*.sqlite3
+*.db
+*.lock
+logs/
+data_backups/
+backups/
+*-backups/
+!tests/fixtures/*.csv
+
+# Secrets and local configuration
+.env
+.env.*
+*.pem
+*.key
+*.p12
+*.pfx
+*.secret
+secrets/
+
+# Local QA, reports and screenshots
+qa-output/
+qa-artifacts/
+screenshots/qa/
+*.log
+*.tmp
+
+# Editors and operating systems
+.idea/
+.vscode/
+*~
+*.swp
+.DS_Store
+Thumbs.db
+ui_v2/_backups/

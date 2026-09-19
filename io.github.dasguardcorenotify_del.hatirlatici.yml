@@ -1,0 +1,365 @@
+# GENERATED production recipe; do not maintain a second dependency list.
+# Canonical dependency/build recipe: io.github.dasguardcorenotify_del.hatirlatici.Devel.yml
+# Regenerate with tools/manifest_contract.py after changing the source.
+# The archive pin is verified locally; remote publication is a separate gate.
+id: io.github.dasguardcorenotify_del.hatirlatici
+runtime: org.freedesktop.Platform
+runtime-version: '25.08'
+sdk: org.freedesktop.Sdk
+sdk-extensions:
+  - org.freedesktop.Sdk.Extension.rust-stable
+command: hatirlatici
+separate-locales: false
+
+finish-args:
+  # Qt rendering and a fallback for desktops without working Wayland support.
+  - --share=ipc
+  - --socket=wayland
+  - --socket=fallback-x11
+  - --device=dri
+  # Optional SMTP delivery. PC-only reminders do not use the network.
+  - --share=network
+  # QSystemTrayIcon communicates with the desktop status notifier watcher.
+  - --talk-name=org.kde.StatusNotifierWatcher
+
+cleanup:
+  - /include
+  - /lib/cmake
+  - /lib/metatypes
+  - /lib/pkgconfig
+  - /lib64/pkgconfig
+  - /lib/sbom
+  - /libexec
+  - /mkspecs
+  - /modules
+  - /phrasebooks
+  - /share/qt6
+  - /share/pkgconfig
+  - /share/man
+  - /share/doc
+  - /bin/android*
+  - /bin/qdbus*
+  - /bin/qmake*
+  - /bin/qt*
+  - /bin/wasm*
+  - /bin/pyqt-bundle
+  - /bin/pyqt-qt-wheel
+  - /bin/sip-build
+  - /bin/sip-distinfo
+  - /bin/sip-module
+  - /bin/sip-sdist
+  - /bin/sip-wheel
+  - /bin/maturin
+  - /bin/cffi-gen-src
+  - /bin/pylupdate6
+  - /bin/pyuic6
+  - /bin/sip-install
+  - /lib/python*/site-packages/ply*
+  - /lib/python*/site-packages/pyqt_builder*
+  - /lib/python*/site-packages/pyqtbuild*
+  - /lib/python*/site-packages/sip-*.dist-info
+  - /lib/python*/site-packages/sipbuild*
+  - /lib/python*/site-packages/maturin*
+  - /lib/python*/site-packages/cairo/include
+  - /lib/python*/site-packages/PyQt6/bindings
+  - /lib/python*/site-packages/PyQt6/*.pyi
+  - /lib/python*/site-packages/PyQt6/uic
+  - /lib/libQt6OpenGLWidgets.so*
+  - /lib/libQt6SvgWidgets.so*
+  # QtBase labels these optional client-side buffer integrations as "server";
+  # Hatırlatıcı uses the EGL client integration and does not ship them.
+  - /plugins/wayland-graphics-integration-client/libdmabuf-server.so
+  - /plugins/wayland-graphics-integration-client/libdrm-egl-server.so
+  - /plugins/wayland-graphics-integration-client/libshm-emulation-server.so
+  - '*.prl'
+  - '*.a'
+  - '*.la'
+
+modules:
+  # Qt is built into /app instead of inherited from the KDE runtime. This keeps
+  # the effective sandbox permissions equal to finish-args: the KDE runtime
+  # itself otherwise grants unrelated KDE configuration and D-Bus access.
+  - name: qtbase
+    buildsystem: cmake-ninja
+    config-opts:
+      - -DCMAKE_BUILD_TYPE=Release
+      - -DQT_BUILD_EXAMPLES=OFF
+      - -DQT_BUILD_TESTS=OFF
+      - -DQT_CREATE_VERSIONED_HARD_LINK=OFF
+      - -DQT_DISABLE_RPATH=ON
+      - -DBUILD_WITH_PCH=OFF
+      # FEATURE_* is Qt's supported user-input namespace. Qt's internal
+      # QT_FEATURE_* cache entries must remain computed, not forced.
+      - -DFEATURE_dbus=ON
+      - -DFEATURE_glib=ON
+      - -DFEATURE_network=ON
+      - -DFEATURE_opengl=ON
+      - -DFEATURE_xcb=ON
+      - -DFEATURE_xkbcommon=ON
+      - -DFEATURE_xkbcommon_x11=ON
+      - -DFEATURE_vulkan=OFF
+      - -DFEATURE_concurrent=OFF
+      - -DFEATURE_eglfs=OFF
+      - -DFEATURE_evdev=OFF
+      - -DFEATURE_linuxfb=OFF
+      - -DFEATURE_printsupport=OFF
+      - -DFEATURE_sql=OFF
+      - -DFEATURE_testlib=OFF
+      - -DFEATURE_vnc=OFF
+      - -DFEATURE_xml=OFF
+      - -DFEATURE_wayland_client=ON
+      - -DFEATURE_wayland_server=OFF
+      # Preserve the SDK's level-3 fortification instead of letting Qt replace
+      # it with a second, lower _FORTIFY_SOURCE definition.
+      - -DFEATURE_glibc_fortify_source=OFF
+    post-install:
+      - install -d /app/share/licenses/io.github.dasguardcorenotify_del.hatirlatici/Qt6
+      - find LICENSES -maxdepth 1 -type f -exec install -Dm644 '{}' /app/share/licenses/io.github.dasguardcorenotify_del.hatirlatici/Qt6/ ';'
+    sources:
+      - type: archive
+        url: https://download.qt.io/official_releases/qt/6.11/6.11.1/submodules/qtbase-everywhere-src-6.11.1.tar.xz
+        sha256: d9594a31228aa23ad6b531719a29b45f0f3989fe6c136d45767ea179f233c1ac
+
+  # Check the generated/installed Qt feature header, then retain a tiny
+  # deterministic attestation after development headers are cleaned up. This
+  # module is keyed to the preceding QtBase output, so a Qt rebuild cannot
+  # reuse the assertion without rechecking the generated feature values.
+  - name: qtbase-client-only-contract
+    buildsystem: simple
+    build-commands:
+      - grep -qx '#define QT_FEATURE_wayland_client 1' /app/include/QtGui/6.11.1/QtGui/private/qtgui-config_p.h
+      - grep -qx '#define QT_FEATURE_wayland_server -1' /app/include/QtGui/6.11.1/QtGui/private/qtgui-config_p.h
+      - grep -qx '#define QT_FEATURE_glibc_fortify_source -1' /app/include/QtCore/6.11.1/QtCore/private/qconfig_p.h
+      - >-
+        printf '#include <features.h>\n#if !defined(_FORTIFY_SOURCE) || _FORTIFY_SOURCE != 3\n#error Flatpak SDK fortification mismatch\n#endif\n'
+        | ${CC:-cc} ${CFLAGS} -E -x c - >/dev/null
+      - install -Dm644 qtbase-client-only-features.txt /app/share/licenses/io.github.dasguardcorenotify_del.hatirlatici/Qt6/FEATURES.txt
+    sources:
+      - type: inline
+        dest-filename: qtbase-client-only-features.txt
+        contents: |
+          QtBase=6.11.1
+          QT_FEATURE_wayland_client=1
+          QT_FEATURE_wayland_server=-1
+          QT_FEATURE_glibc_fortify_source=-1
+          FLATPAK_SDK_FORTIFY_SOURCE=3
+
+  # The UI and exported application identity use SVG artwork. Qt SVG supplies
+  # the runtime image/icon plugins and is built before QtWayland so its
+  # client-side Adwaita decoration plugin is available. No PyQt QtSvg binding
+  # is exposed.
+  - name: qtsvg-runtime-plugins
+    buildsystem: cmake-ninja
+    config-opts:
+      - -DCMAKE_BUILD_TYPE=Release
+      - -DQT_BUILD_EXAMPLES=OFF
+      - -DQT_BUILD_TESTS=OFF
+    post-install:
+      - install -d /app/share/licenses/io.github.dasguardcorenotify_del.hatirlatici/Qt6-SVG
+      - find LICENSES -maxdepth 1 -type f -exec install -Dm644 '{}' /app/share/licenses/io.github.dasguardcorenotify_del.hatirlatici/Qt6-SVG/ ';'
+    sources:
+      - type: archive
+        url: https://download.qt.io/official_releases/qt/6.11/6.11.1/submodules/qtsvg-everywhere-src-6.11.1.tar.xz
+        sha256: 7f3cf02f4824bf03c2c5859ea6db173bf1482a1daf24e6cdf7bc78cfa26a8a94
+
+  # In Qt 6.11 the QPA Wayland client lives in QtBase. The matching standalone
+  # QtWayland source supplies its remaining client integration/compatibility
+  # and Adwaita decoration pieces; its compositor/server feature is explicitly
+  # disabled, and no Qt QML/Quick installation is present.
+  - name: qtwayland-client
+    buildsystem: cmake-ninja
+    config-opts:
+      - -DCMAKE_BUILD_TYPE=Release
+      - -DQT_BUILD_EXAMPLES=OFF
+      - -DQT_BUILD_TESTS=OFF
+      - -DFEATURE_wayland_server=OFF
+    post-install:
+      - install -d /app/share/licenses/io.github.dasguardcorenotify_del.hatirlatici/Qt6-Wayland
+      - find LICENSES -maxdepth 1 -type f -exec install -Dm644 '{}' /app/share/licenses/io.github.dasguardcorenotify_del.hatirlatici/Qt6-Wayland/ ';'
+    sources:
+      - type: archive
+        url: https://download.qt.io/official_releases/qt/6.11/6.11.1/submodules/qtwayland-everywhere-src-6.11.1.tar.xz
+        sha256: 95788aa502f75441d4edf65932b235f76523084e13dbbb7b9ee2d207b32bd9b3
+
+  # PyQt6 is built directly from the official GPL source distribution. The
+  # version, hashes, dependency order, and build options follow the maintained
+  # Flathub PyQt BaseApp 6.11 manifest at commit 4b4f0d30a116, while enabling
+  # only the five Qt modules Hatırlatıcı imports.
+  - name: python-ply
+    buildsystem: simple
+    build-commands:
+      - pip3 install --verbose --no-index --no-deps --no-build-isolation --no-cache-dir --prefix=${FLATPAK_DEST} .
+      - install -Dm644 README.md /app/share/licenses/io.github.dasguardcorenotify_del.hatirlatici/ply/README.md
+    sources:
+      - type: archive
+        url: https://files.pythonhosted.org/packages/e5/69/882ee5c9d017149285cab114ebeab373308ef0f874fcdac9beb90e0ac4da/ply-3.11.tar.gz
+        sha256: 00c7c1aaa88358b9c765b6d3000c6eec0ba42abca5351b095321aef446081da3
+
+  - name: sip
+    buildsystem: simple
+    build-commands:
+      - pip3 install --verbose --no-index --no-deps --no-build-isolation --no-cache-dir --prefix=${FLATPAK_DEST} .
+      - install -Dm644 LICENSE /app/share/licenses/io.github.dasguardcorenotify_del.hatirlatici/sip/LICENSE
+    sources:
+      - type: archive
+        url: https://files.pythonhosted.org/packages/3c/ca/6b4861723d1bd92d0a21afece74fc63d9bd62fabb1dcc209113972505434/sip-6.16.1.tar.gz
+        sha256: 0a739c9cd2929de4e0884456d8caf3cfb22c10534757c7797bd8dc6bd9ed69bc
+
+  - name: pyqt-builder
+    buildsystem: simple
+    build-commands:
+      - pip3 install --verbose --no-index --no-deps --no-build-isolation --no-cache-dir --prefix=${FLATPAK_DEST} .
+      - install -Dm644 LICENSE /app/share/licenses/io.github.dasguardcorenotify_del.hatirlatici/PyQt-builder/LICENSE
+    sources:
+      - type: archive
+        url: https://files.pythonhosted.org/packages/61/f6/f3b504b4d55a7c4d3393cb90378501f1f5fc7f233bd85c0375674f84d2af/pyqt_builder-1.19.1.tar.gz
+        sha256: 6af6646ba29668751b039bfdced51642cb510e300796b58a4d68b7f956a024d8
+
+  - name: pyqt-sip
+    buildsystem: simple
+    build-commands:
+      - python3 setup.py build
+      - python3 setup.py install --skip-build --prefix=${FLATPAK_DEST} --root=/ --optimize=1
+      - install -Dm644 LICENSE /app/share/licenses/io.github.dasguardcorenotify_del.hatirlatici/PyQt6-sip/LICENSE
+    sources:
+      - type: archive
+        url: https://files.pythonhosted.org/packages/d1/23/16c583dbb6b53e0494dfcf7d1a44778c82e324edda62326727b37f1a5b34/pyqt6_sip-13.12.0.tar.gz
+        sha256: a7ad45c1e3cec3a2473d37ea9870b6c3baeccc560298623c8eb59265714c06e2
+
+  - name: pyqt
+    buildsystem: simple
+    build-options:
+      env:
+        QMAKEPATH: /app
+    build-commands:
+      - >-
+        sip-build
+        --confirm-license
+        --verbose
+        --no-make
+        --concatenate=1
+        --disabled-feature=PyQt_OpenGL_ES2
+        --disabled-feature=PyQt_Vulkan
+        --disabled-feature=PyQt_Permissions
+        --qmake-setting="QMAKE_CFLAGS_RELEASE += ${CFLAGS} $(python3-config --includes)"
+        --qmake-setting="QMAKE_CXXFLAGS_RELEASE += ${CXXFLAGS} $(python3-config --includes)"
+        --qmake-setting="QMAKE_LFLAGS += ${LDFLAGS}"
+        --qmake-setting="CONFIG += no_qt_rpath"
+        --scripts-dir=/app/bin
+        --target-dir=/app/lib/python$(python3 -c 'import sys; print(f"{sys.version_info.major}.{sys.version_info.minor}")')/site-packages
+        --qt-shared
+        --enable=QtCore
+        --enable=QtDBus
+        --enable=QtGui
+        --enable=QtNetwork
+        --enable=QtWidgets
+      - make -j${FLATPAK_BUILDER_N_JOBS} --directory=build
+      - make --directory=build install
+      - install -Dm644 LICENSE /app/share/licenses/io.github.dasguardcorenotify_del.hatirlatici/PyQt6/LICENSE
+    sources:
+      - type: archive
+        url: https://files.pythonhosted.org/packages/8b/47/b25c13eca5bebc6505394d0223e46d7ebf0c57dcac2ed908d7d19b18ab6b/pyqt6-6.11.0.tar.gz
+        sha256: 45dd60aa69976de1918b5ced6b4e7b6a25abd2a919ecef5fd5826ecc76718889
+
+  - name: python-pycairo
+    buildsystem: meson
+    post-install:
+      - install -Dm644 /run/build/python-pycairo/COPYING /app/share/licenses/io.github.dasguardcorenotify_del.hatirlatici/pycairo/COPYING
+      - install -Dm644 /run/build/python-pycairo/COPYING-LGPL-2.1 /app/share/licenses/io.github.dasguardcorenotify_del.hatirlatici/pycairo/COPYING-LGPL-2.1
+      - install -Dm644 /run/build/python-pycairo/COPYING-MPL-1.1 /app/share/licenses/io.github.dasguardcorenotify_del.hatirlatici/pycairo/COPYING-MPL-1.1
+    sources:
+      - type: archive
+        url: https://files.pythonhosted.org/packages/26/7c/ab4637b028d9ee12280ab9342f28310e613d5ca30c4d72d2aebeaa6a4969/pycairo-1.29.1.tar.gz
+        sha256: 4fbd26b4af24c9787d84cf5448e34eb8dca064b732479aaecd03109520eebd5f
+
+  - name: python-pygobject
+    buildsystem: meson
+    post-install:
+      - install -Dm644 /run/build/python-pygobject/COPYING /app/share/licenses/io.github.dasguardcorenotify_del.hatirlatici/PyGObject/COPYING
+    sources:
+      - type: archive
+        url: https://files.pythonhosted.org/packages/da/61/978c5fbca34f10a90df362502fbb5a005637909e7b5a0e9212349ea9d010/pygobject-3.56.3.tar.gz
+        sha256: 12760e4a0e3d04b6eb95e06f7a27e362c826d567ea613373a92c003b6c70d2d6
+
+  - name: python-pycparser
+    buildsystem: simple
+    build-commands:
+      - pip3 install --verbose --no-index --no-deps --no-build-isolation --no-cache-dir --prefix=${FLATPAK_DEST} .
+      - install -Dm644 LICENSE /app/share/licenses/io.github.dasguardcorenotify_del.hatirlatici/pycparser/LICENSE
+    sources:
+      - type: archive
+        url: https://files.pythonhosted.org/packages/1b/7d/92392ff7815c21062bea51aa7b87d45576f649f16458d78b7cf94b9ab2e6/pycparser-3.0.tar.gz
+        sha256: 600f49d217304a5902ac3c37e1281c9fe94e4d0489de643a9504c5cdfdfc6b29
+
+  - name: python-cffi
+    buildsystem: simple
+    build-commands:
+      - pip3 install --verbose --no-index --no-deps --no-build-isolation --no-cache-dir --prefix=${FLATPAK_DEST} .
+      - install -Dm644 LICENSE /app/share/licenses/io.github.dasguardcorenotify_del.hatirlatici/cffi/LICENSE
+    sources:
+      - type: archive
+        url: https://files.pythonhosted.org/packages/9e/ef/008a1939e372c06329a3fce4279c02f328488f3526744906eeec3da7ad5f/cffi-2.1.1.tar.gz
+        sha256: dd31f52ea1086513bb9df30f8fcee9b8918323ae067a3d5b78bc826a000712be
+
+  # Build backend for cryptography. Cargo sources are generated from the
+  # maturin 1.14.1 lockfile by flatpak-cargo-generator.
+  - name: maturin
+    buildsystem: simple
+    build-options:
+      append-path: /usr/lib/sdk/rust-stable/bin
+      env:
+        CARGO_HOME: /run/build/maturin/cargo
+        CARGO_NET_OFFLINE: 'true'
+    build-commands:
+      - cargo --offline fetch --manifest-path ./Cargo.toml
+      - cargo --offline build --release
+      - install -Dm755 target/release/maturin -t ${FLATPAK_DEST}/bin
+      - install -Dm644 maturin/__init__.py -t ${FLATPAK_DEST}/lib/python$(python3 -c 'import sys; print(f"{sys.version_info.major}.{sys.version_info.minor}")')/site-packages/maturin/
+    sources:
+      - packaging/flatpak/cargo-sources-maturin.json
+      - type: archive
+        url: https://files.pythonhosted.org/packages/e7/b3/addd877f871fb1860d46d3a4f206ecb10b946c85846805e6367631926fd3/maturin-1.14.1.tar.gz
+        sha256: 9d6577a62cd08e0ceba7a0db06fb098e0c9b1b3429bad747a4f3a18215a1b3df
+
+  # cryptography is built from its sdist with a matching offline Cargo vendor
+  # set. No architecture-specific wheel is accepted here.
+  - name: python-cryptography
+    buildsystem: simple
+    build-options:
+      append-path: /usr/lib/sdk/rust-stable/bin
+      env:
+        CARGO_HOME: /run/build/python-cryptography/cargo
+        CARGO_NET_OFFLINE: 'true'
+        RUST_BACKTRACE: '1'
+    build-commands:
+      - pip3 install --verbose --no-index --no-deps --no-build-isolation --no-cache-dir --prefix=${FLATPAK_DEST} .
+      - python3 install-cargo-license-inventory.py --vendor cargo/vendor --output /app/share/licenses/io.github.dasguardcorenotify_del.hatirlatici/cryptography/cargo --expected-count 32
+      - install -Dm644 LICENSE /app/share/licenses/io.github.dasguardcorenotify_del.hatirlatici/cryptography/LICENSE
+      - install -Dm644 LICENSE.APACHE /app/share/licenses/io.github.dasguardcorenotify_del.hatirlatici/cryptography/LICENSE.APACHE
+      - install -Dm644 LICENSE.BSD /app/share/licenses/io.github.dasguardcorenotify_del.hatirlatici/cryptography/LICENSE.BSD
+    sources:
+      - packaging/flatpak/cargo-sources-cryptography.json
+      - type: file
+        path: packaging/flatpak/install-cargo-license-inventory.py
+      - type: archive
+        url: https://files.pythonhosted.org/packages/de/41/6cbdcf9142d00fe82836fbb51e503e58088575cf7a0fe1dbff6695bf0840/cryptography-50.0.0.tar.gz
+        sha256: eeac2acb5a20ed25e0ad6d1df9891a520b78b404266b6d11778f25d5d691a6c9
+
+  - name: hatirlatici
+    buildsystem: simple
+    build-commands:
+      - install -d /app/lib/hatirlatici
+      - find . -maxdepth 1 -type f -name '*.py' -exec install -Dm644 '{}' '/app/lib/hatirlatici/{}' ';'
+      - find ui_v2 -type f -name '*.py' -exec install -Dm644 '{}' '/app/lib/hatirlatici/{}' ';'
+      - install -Dm644 assets/hatirlatici.svg /app/lib/hatirlatici/assets/hatirlatici.svg
+      - python3 -m compileall -q /app/lib/hatirlatici
+      - install -Dm755 packaging/flatpak/hatirlatici-flatpak-launcher.sh /app/bin/hatirlatici
+      - install -Dm644 packaging/flatpak/io.github.dasguardcorenotify_del.hatirlatici.desktop /app/share/applications/io.github.dasguardcorenotify_del.hatirlatici.desktop
+      - install -Dm644 packaging/flatpak/io.github.dasguardcorenotify_del.hatirlatici.metainfo.xml /app/share/metainfo/io.github.dasguardcorenotify_del.hatirlatici.metainfo.xml
+      - install -Dm644 packaging/flatpak/io.github.dasguardcorenotify_del.hatirlatici.svg /app/share/icons/hicolor/scalable/apps/io.github.dasguardcorenotify_del.hatirlatici.svg
+      - install -Dm644 LICENSE /app/share/licenses/io.github.dasguardcorenotify_del.hatirlatici/LICENSE
+      - install -Dm644 THIRD_PARTY_NOTICES.md /app/share/licenses/io.github.dasguardcorenotify_del.hatirlatici/THIRD_PARTY_NOTICES.md
+    sources:
+      - type: archive
+        url: https://github.com/dasguardcorenotify-del/hatirlatici/releases/download/v2.0.0/hatirlatici-2.0.0.tar.xz
+        sha256: 2156de3a068f18dd346e099308b3320e391c4d55324f2667a295a0b57ba712f3

@@ -1,0 +1,49 @@
+name: Quality
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test-and-audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    env:
+      QT_QPA_PLATFORM: offscreen
+      PYTHONUNBUFFERED: '1'
+    steps:
+      - name: Check out source
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+
+      - name: Set up Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: '3.13'
+          cache: pip
+
+      - name: Install validators and test dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes appstream desktop-file-utils
+          python -m pip install --disable-pip-version-check \
+            'PyQt6==6.11.0' \
+            'cryptography==50.0.0'
+
+      - name: Compile Python sources
+        run: python -m compileall -q *.py ui_v2 tests tools packaging/flatpak
+
+      - name: Run unit and integration-policy tests
+        run: python -m unittest discover -s tests -p 'test_*.py'
+
+      - name: Run shell launcher tests
+        run: |
+          bash tests/test_public_launcher_runtime.sh
+          bash tests/test_pc_wrapper_runtime.sh
+
+      - name: Run privacy, secret, localization, packaging, and metadata gates
+        run: python packaging/flatpak/release_gate.py
