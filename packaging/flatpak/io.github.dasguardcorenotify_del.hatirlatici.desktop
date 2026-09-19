@@ -1,0 +1,26 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=Hatırlatıcı
+GenericName=Reminder Manager
+GenericName[tr]=Hatırlatma Yöneticisi
+GenericName[de]=Erinnerungsverwaltung
+GenericName[es]=Gestor de recordatorios
+GenericName[ru]=Менеджер напоминаний
+Comment=Manage local reminders with desktop notifications and optional email delivery
+Comment[tr]=Yerel hatırlatmaları masaüstü bildirimleri ve isteğe bağlı e-posta teslimatıyla yönetin
+Comment[de]=Lokale Erinnerungen mit Desktop-Benachrichtigungen und optionalem E-Mail-Versand verwalten
+Comment[es]=Gestiona recordatorios locales con notificaciones de escritorio y envío opcional por correo
+Comment[ru]=Управляйте локальными напоминаниями с уведомлениями на рабочем столе и необязательной отправкой по почте
+Exec=hatirlatici
+Icon=io.github.dasguardcorenotify_del.hatirlatici
+Terminal=false
+Categories=Utility;
+Keywords=reminder;notification;schedule;email;local;
+Keywords[tr]=hatırlatıcı;bildirim;program;eposta;yerel;
+Keywords[de]=Erinnerung;Benachrichtigung;Zeitplan;E-Mail;lokal;
+Keywords[es]=recordatorio;notificación;agenda;correo;local;
+Keywords[ru]=напоминание;уведомление;расписание;почта;локально;
+StartupNotify=true
+StartupWMClass=io.github.dasguardcorenotify_del.hatirlatici
+X-GNOME-UsesNotifications=true

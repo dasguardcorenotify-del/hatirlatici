@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>io.github.dasguardcorenotify_del.hatirlatici</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-3.0-or-later</project_license>
+
+  <name>Hatırlatıcı</name>
+  <name xml:lang="tr">Hatırlatıcı</name>
+  <name xml:lang="de">Hatırlatıcı</name>
+  <name xml:lang="es">Hatırlatıcı</name>
+  <name xml:lang="ru">Hatırlatıcı</name>
+
+  <summary>Local-first reminders with desktop notifications and optional email delivery</summary>
+  <summary xml:lang="tr">Masaüstü bildirimleri ve isteğe bağlı e-posta teslimatıyla yerel öncelikli hatırlatmalar</summary>
+  <summary xml:lang="de">Lokale Erinnerungen mit Desktop-Benachrichtigungen und optionalem E-Mail-Versand</summary>
+  <summary xml:lang="es">Recordatorios locales con notificaciones de escritorio y envío opcional por correo</summary>
+  <summary xml:lang="ru">Локальные напоминания с уведомлениями на рабочем столе и необязательной отправкой по почте</summary>
+
+  <developer id="io.github.dasguardcorenotify_del">
+    <name>Hatırlatıcı contributors</name>
+  </developer>
+
+  <description>
+    <p>
+      Hatırlatıcı is a privacy-respecting reminder application for Linux. Reminder data stays in the app's local data directories, and scheduled items can be delivered as desktop notifications, email, or both.
+    </p>
+    <p xml:lang="tr">
+      Hatırlatıcı, Linux için gizliliğe saygılı bir hatırlatma uygulamasıdır. Hatırlatma verileri uygulamanın yerel veri dizinlerinde kalır; zamanlanan öğeler masaüstü bildirimi, e-posta veya her ikisiyle teslim edilebilir.
+    </p>
+    <p xml:lang="de">
+      Hatırlatıcı ist eine datenschutzfreundliche Erinnerungsanwendung für Linux. Erinnerungsdaten verbleiben in den lokalen Datenverzeichnissen der App; geplante Einträge können als Desktop-Benachrichtigung, per E-Mail oder über beide Wege zugestellt werden.
+    </p>
+    <p xml:lang="es">
+      Hatırlatıcı es una aplicación de recordatorios para Linux que respeta la privacidad. Los datos permanecen en los directorios locales de la aplicación y los elementos programados se pueden entregar mediante notificaciones de escritorio, correo electrónico o ambos.
+    </p>
+    <p xml:lang="ru">
+      Hatırlatıcı — приложение напоминаний для Linux, уважающее конфиденциальность. Данные хранятся в локальных каталогах приложения, а запланированные события могут доставляться уведомлением на рабочем столе, электронной почтой или обоими способами.
+    </p>
+    <p>
+      Optional email delivery supports Gmail App Passwords and custom SMTP servers. Credentials are encrypted locally, no analytics or advertising components are included, and network access is used only for features the user intentionally configures.
+    </p>
+    <p xml:lang="tr">
+      İsteğe bağlı e-posta teslimatı Gmail Uygulama Şifrelerini ve özel SMTP sunucularını destekler. Kimlik bilgileri yerel olarak şifrelenir; analiz veya reklam bileşeni yoktur ve ağ erişimi yalnızca kullanıcının bilinçli olarak yapılandırdığı işlevler için kullanılır.
+    </p>
+    <p xml:lang="de">
+      Der optionale E-Mail-Versand unterstützt Gmail-App-Passwörter und eigene SMTP-Server. Zugangsdaten werden lokal verschlüsselt; Analyse- oder Werbekomponenten sind nicht enthalten und der Netzwerkzugriff dient nur bewusst konfigurierten Funktionen.
+    </p>
+    <p xml:lang="es">
+      El envío opcional por correo admite contraseñas de aplicación de Gmail y servidores SMTP personalizados. Las credenciales se cifran localmente, no hay componentes de análisis ni publicidad y la red solo se usa para funciones configuradas de forma intencional.
+    </p>
+    <p xml:lang="ru">
+      Необязательная отправка по почте поддерживает пароли приложений Gmail и пользовательские SMTP-серверы. Учётные данные шифруются локально; аналитика и реклама отсутствуют, а сеть используется только для функций, явно настроенных пользователем.
+    </p>
+  </description>
+
+  <launchable type="desktop-id">io.github.dasguardcorenotify_del.hatirlatici.desktop</launchable>
+  <provides>
+    <binary>hatirlatici</binary>
+  </provides>
+
+  <url type="homepage">https://github.com/dasguardcorenotify-del/hatirlatici</url>
+  <url type="bugtracker">https://github.com/dasguardcorenotify-del/hatirlatici/issues</url>
+  <url type="vcs-browser">https://github.com/dasguardcorenotify-del/hatirlatici</url>
+
+  <supports>
+    <control>pointing</control>
+    <control>keyboard</control>
+  </supports>
+
+  <screenshots>
+    <screenshot type="default">
+      <image type="source" width="1000" height="700">https://raw.githubusercontent.com/dasguardcorenotify-del/hatirlatici/v2.0.0/docs/screenshots/01-today-new-reminder.png</image>
+      <caption>Create a reminder from the Today view</caption>
+      <caption xml:lang="tr">Bugün görünümünde yeni hatırlatıcı oluşturma</caption>
+      <caption xml:lang="de">Eine Erinnerung in der Heute-Ansicht erstellen</caption>
+      <caption xml:lang="es">Crear un recordatorio desde la vista Hoy</caption>
+      <caption xml:lang="ru">Создание напоминания в представлении «Сегодня»</caption>
+    </screenshot>
+    <screenshot>
+      <image type="source" width="1000" height="700">https://raw.githubusercontent.com/dasguardcorenotify-del/hatirlatici/v2.0.0/docs/screenshots/02-reminder-list.png</image>
+      <caption>Review scheduled reminders in the list</caption>
+      <caption xml:lang="tr">Planlanmış hatırlatıcıları listede gözden geçirme</caption>
+      <caption xml:lang="de">Geplante Erinnerungen in der Liste prüfen</caption>
+      <caption xml:lang="es">Revisar los recordatorios programados en la lista</caption>
+      <caption xml:lang="ru">Просмотр запланированных напоминаний в списке</caption>
+    </screenshot>
+    <screenshot>
+      <image type="source" width="1000" height="700">https://raw.githubusercontent.com/dasguardcorenotify-del/hatirlatici/v2.0.0/docs/screenshots/03-history.png</image>
+      <caption>Review reminder delivery history</caption>
+      <caption xml:lang="tr">Hatırlatıcı teslim geçmişini gözden geçirme</caption>
+      <caption xml:lang="de">Den Zustellverlauf der Erinnerungen prüfen</caption>
+      <caption xml:lang="es">Revisar el historial de entrega de recordatorios</caption>
+      <caption xml:lang="ru">Просмотр истории доставки напоминаний</caption>
+    </screenshot>
+    <screenshot>
+      <image type="source" width="1000" height="700">https://raw.githubusercontent.com/dasguardcorenotify-del/hatirlatici/v2.0.0/docs/screenshots/04-settings-local-security.png</image>
+      <caption>Configure language, delivery, and local security settings</caption>
+      <caption xml:lang="tr">Dil, teslimat ve yerel güvenlik ayarlarını yapılandırma</caption>
+      <caption xml:lang="de">Sprache, Zustellung und lokale Sicherheit konfigurieren</caption>
+      <caption xml:lang="es">Configurar el idioma, la entrega y la seguridad local</caption>
+      <caption xml:lang="ru">Настройка языка, доставки и локальной безопасности</caption>
+    </screenshot>
+    <screenshot>
+      <image type="source" width="980" height="730">https://raw.githubusercontent.com/dasguardcorenotify-del/hatirlatici/v2.0.0/docs/screenshots/05-first-run-gmail-guide.png</image>
+      <caption>Follow the first-run Gmail App Password guide</caption>
+      <caption xml:lang="tr">İlk çalıştırmada Gmail Uygulama Şifresi rehberini izleme</caption>
+      <caption xml:lang="de">Der Anleitung für Gmail-App-Passwörter beim ersten Start folgen</caption>
+      <caption xml:lang="es">Seguir la guía inicial de contraseñas de aplicación de Gmail</caption>
+      <caption xml:lang="ru">Руководство по паролю приложения Gmail при первом запуске</caption>
+    </screenshot>
+    <screenshot>
+      <image type="source" width="1000" height="700">https://raw.githubusercontent.com/dasguardcorenotify-del/hatirlatici/v2.0.0/docs/screenshots/06-support-and-language.png</image>
+      <caption>Access About, privacy, issue-reporting, and support options</caption>
+      <caption xml:lang="tr">Hakkında, gizlilik, sorun bildirme ve destek seçeneklerine erişme</caption>
+      <caption xml:lang="de">Info, Datenschutz, Fehlerberichte und Support aufrufen</caption>
+      <caption xml:lang="es">Acceder a Acerca de, privacidad, informes de errores y ayuda</caption>
+      <caption xml:lang="ru">Доступ к сведениям, конфиденциальности, сообщениям об ошибках и поддержке</caption>
+    </screenshot>
+  </screenshots>
+
+  <content_rating type="oars-1.1" />
+
+  <releases>
+    <release version="2.0.0" date="2026-08-21">
+      <description>
+        <p>First public Linux release with local reminders, desktop notifications, optional SMTP delivery, secure local credential storage, and five interface languages.</p>
+        <p>The Flatpak uses the Freedesktop 25.08 runtime with pinned source builds of Qt 6.11.1 and PyQt6.</p>
+      </description>
+    </release>
+  </releases>
+</component>
