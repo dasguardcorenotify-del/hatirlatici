@@ -37,4 +37,4 @@ Local leasing prevents normal duplicate dispatch, but no SMTP client can guarant
 
 Application data remains inside the Flatpak-scoped XDG directories. Credentials are encrypted locally and are never intentionally printed. See `PRIVACY.md`, `SECURITY.md`, and `THIRD_PARTY_NOTICES.md` in the tagged source.
 
-No donation destination is included because no real owner-verified public URL is available. This release contains disclosed AI-assisted code and documentation; under Flathub's policy checked on 2026-08-21, no Flathub submission was opened.
+No donation destination is included because no real owner-verified public URL is available. This release contains disclosed AI-assisted code and documentation. Flathub acceptance remains subject to reviewer discretion, and the human owner will handle submission and review communications manually.

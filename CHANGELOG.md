@@ -24,4 +24,4 @@ All notable public-release changes are documented here.
 
 - No analytics, advertising, tracking, cloud account, or cloud sync is included.
 - Six synthetic-data store screenshots are included and pinned to the `v2.0.0` tag. No donation destination is published because no real owner-verified URL is available.
-- Flathub submission is externally blocked by the current generative-AI policy unless an applicable exception is granted or the policy changes.
+- Flathub requires honest disclosure of AI-generated material and leaves acceptance to reviewer discretion; AI agents must not automate the submission PR or its review communications.

@@ -4,7 +4,7 @@ Hatırlatıcı is a local-first reminder application for Linux. It schedules rem
 
 Version 2.0.0 supports English, Turkish, German, Spanish, and Russian.
 
-> Project status (2026-08-21): public-release engineering is in progress. The repository, annotated release tag, installable bundle, and donation destination must be verified before publication. Six synthetic-data store screenshots have passed visual and privacy review. This project contains AI-assisted code and documentation; that provenance must not be concealed.
+> Project status (2026-09-19): the source provenance has been verified and an honest upstream Git repository is being established. Runtime upgrade, clean multi-architecture build, public release assets, and Flathub review remain open. AI assistance is disclosed in [AI_ASSISTANCE_DISCLOSURE.md](AI_ASSISTANCE_DISCLOSURE.md), and source history reconstruction is documented in [docs/PROVENANCE.md](docs/PROVENANCE.md).
 
 ## Features
 

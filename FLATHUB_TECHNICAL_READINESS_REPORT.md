@@ -1,5 +1,7 @@
 # Flathub technical readiness report
 
+> **Policy correction — 2026-09-19:** The generative-AI section in the original 2026-08-21 assessment was too broad. It is corrected below and superseded by `AI_ASSISTANCE_DISCLOSURE.md`.
+
 Assessment date: 2026-08-21  
 Application: Hatırlatıcı 2.0.0  
 Flatpak ID: `io.github.dasguardcorenotify_del.hatirlatici`
@@ -21,7 +23,7 @@ GITHUB_REPOSITORY_EXTERNAL_OWNER_ACTION_REQUIRED=YES
 RELEASE_TAG_EXTERNAL_OWNER_ACTION_REQUIRED=YES
 RELEASE_ASSET_EXTERNAL_OWNER_ACTION_REQUIRED=YES
 AARCH64_BUILD_VERIFICATION_REQUIRED=YES
-FLATHUB_GENERATIVE_AI_POLICY_GATE=BLOCKED
+FLATHUB_GENERATIVE_AI_POLICY_GATE=DISCLOSURE_PRESENT_REVIEWER_DECISION_REQUIRED
 FLATHUB_PUBLISHED=NO
 ```
 
@@ -97,7 +99,7 @@ The manifest explicitly installs first-party GPL-3.0-or-later and upstream licen
 
 No repository, tag, GitHub release, Flatpak bundle, Flathub submission, or donation destination has been created by this work. The six accepted store screenshots exist locally, but publishing the repository and exact tag remains an external owner action.
 
-More importantly, Flathub's current inclusion requirements explicitly prohibit applications containing AI-generated or AI-assisted code or documentation, and prohibit AI-generated submission pull requests and review communications. The policy says exceptions may be granted for mature, well-maintained projects. Hatırlatıcı discloses AI assistance and does not currently have the public history needed to claim that discretionary exception. Therefore an automated or AI-authored Flathub submission must not be opened, and `FLATHUB_GENERATIVE_AI_POLICY_GATE` remains `BLOCKED` unless Flathub itself grants a documented exception under the then-current policy.
+Flathub's current requirements require disclosure of known or reasonably believed AI-generated code, documentation, packaging, or other included material. Disclosed material is evaluated at reviewer discretion. AI tools or agents must not open or automate the submission pull request and must not generate its commit message, description, review comments, or replies. Hatırlatıcı therefore keeps a visible disclosure, while the human owner retains the submission and review communication steps.
 
 Primary references checked on 2026-08-21:
 
