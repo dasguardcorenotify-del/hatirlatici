@@ -382,4 +382,4 @@ modules:
     sources:
       - type: archive
         url: https://github.com/dasguardcorenotify-del/hatirlatici/releases/download/v2.0.0/hatirlatici-2.0.0.tar.xz
-        sha256: 775c4072bbf3fd60f5edd9186f9201ea09a40ccb09a26d4e8285c13e6cd2c571
+        sha256: a80cf6d4f7464c19674b014331f44ba620b3d35d76d3f2d124fff5fddb90e1fa

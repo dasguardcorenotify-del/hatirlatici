@@ -16,7 +16,6 @@ jobs:
     env:
       QT_QPA_PLATFORM: offscreen
       PYTHONUNBUFFERED: '1'
-      CI_VENV: ${{ runner.temp }}/hatirlatici-quality-${{ github.run_id }}-${{ github.run_attempt }}
     steps:
       - name: Check out source
         uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
@@ -28,13 +27,18 @@ jobs:
           from pathlib import Path
           workspace = Path(os.environ["GITHUB_WORKSPACE"]).resolve()
           temporary = Path(os.environ["RUNNER_TEMP"]).resolve()
-          environment = Path(os.environ["CI_VENV"]).resolve()
+          environment = (temporary / (
+              "hatirlatici-quality-" + os.environ["GITHUB_RUN_ID"]
+              + "-" + os.environ["GITHUB_RUN_ATTEMPT"]
+          )).resolve()
           if temporary not in environment.parents:
               raise SystemExit("CI_VENV must be below RUNNER_TEMP")
           if environment == workspace or workspace in environment.parents:
               raise SystemExit("CI_VENV must be outside the source tree")
           if environment.exists():
               raise SystemExit("Refusing to overwrite an existing CI environment")
+          with open(os.environ["GITHUB_ENV"], "a", encoding="utf-8") as target:
+              print(f"CI_VENV={environment}", file=target)
           PYTHON
 
       - name: Install native libraries and create the test environment
