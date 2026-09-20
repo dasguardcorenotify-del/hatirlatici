@@ -1,5 +1,6 @@
 import json
 import re
+import runpy
 import unittest
 import xml.etree.ElementTree as ET
 from pathlib import Path
@@ -214,6 +215,33 @@ class PackagingReleaseTests(unittest.TestCase):
             for source in sources:
                 if source.get("type") == "archive":
                     self.assertRegex(source.get("sha256", ""), r"^[0-9a-f]{64}$")
+
+        verifier = runpy.run_path(str(ROOT / "packaging" / "flatpak" / "verify-built-flatpak.py"))
+        socket_gate = verifier["socket_permissions_are_exact"]
+        self.assertTrue(socket_gate({"wayland", "fallback-x11"}))
+        self.assertTrue(socket_gate({"x11", "wayland", "fallback-x11"}))
+        for forbidden in (
+            set(),
+            {"wayland"},
+            {"x11"},
+            {"wayland", "x11"},
+            {"wayland", "fallback-x11", "pulseaudio"},
+        ):
+            self.assertFalse(socket_gate(forbidden))
+
+        quality = (ROOT / ".github" / "workflows" / "quality.yml").read_text(encoding="utf-8")
+        self.assertNotIn("actions/setup-python", quality)
+        self.assertNotIn("cache: pip", quality)
+        self.assertIn("--system-site-packages", quality)
+        self.assertIn("python3-gi", quality)
+        self.assertIn("gir1.2-glib-2.0", quality)
+        self.assertIn("libegl1", quality)
+        self.assertIn("$PWD/.ci-venv/bin", quality)
+        self.assertIn('PYTHONPATH="$PWD:$PWD/ui_v2"', quality)
+        self.assertIn('discovered == 218', quality)
+        self.assertIn('result.testsRun == 218', quality)
+        self.assertIn('libopengl0', quality)
+        self.assertIn('libxcb-xkb1', quality)
 
     def test_desktop_identity(self):
         desktop = (ROOT / "packaging" / "flatpak" / f"{APP_ID}.desktop").read_text(encoding="utf-8")

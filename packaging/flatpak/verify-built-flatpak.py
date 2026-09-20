@@ -94,6 +94,18 @@ def require(condition: bool, message: str, errors: list[str]) -> None:
         errors.append(message)
 
 
+ALLOWED_SOCKET_PERMISSION_SETS = (
+    frozenset({"wayland", "fallback-x11"}),
+    frozenset({"x11", "wayland", "fallback-x11"}),
+)
+
+
+def socket_permissions_are_exact(sockets: set[str]) -> bool:
+    """Accept only equivalent Flatpak encodings of Wayland + fallback X11."""
+
+    return frozenset(sockets) in ALLOWED_SOCKET_PERMISSION_SETS
+
+
 def verify_elf_hardening(path: Path, errors: list[str]) -> None:
     try:
         program_headers = subprocess.run(
@@ -240,11 +252,14 @@ def verify(build_dir: Path) -> list[str]:
     runtime = metadata.get("Application", "runtime", fallback="")
     require(runtime.startswith("org.freedesktop.Platform/") and runtime.endswith("/26.08"), "runtime mismatch", errors)
     require(values(metadata, "Context", "shared") == {"ipc", "network"}, "unexpected shared permissions", errors)
-    # Flatpak serializes fallback-x11 as both x11 and the fallback marker. The
-    # latter makes X11 unavailable when the Wayland socket is usable.
+    # Flatpak versions differ in whether fallback-x11 is serialized alone or
+    # together with the derived x11 marker. Both encodings preserve the exact
+    # manifest policy: Wayland first, X11 only as a fallback. No broader socket
+    # set is accepted.
+    sockets = values(metadata, "Context", "sockets")
     require(
-        values(metadata, "Context", "sockets") == {"x11", "wayland", "fallback-x11"},
-        "unexpected socket permissions",
+        socket_permissions_are_exact(sockets),
+        f"unexpected socket permissions: {sorted(sockets)!r}",
         errors,
     )
     require(values(metadata, "Context", "devices") == {"dri"}, "unexpected device permissions", errors)
