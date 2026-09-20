@@ -23,7 +23,9 @@ jobs:
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 360
     container:
-      image: ghcr.io/flathub-infra/flatpak-github-actions:freedesktop-26.08
+      # The latest published Flathub Actions image. The builder action installs
+      # the manifest-pinned Freedesktop 26.08 runtime from Flathub.
+      image: ghcr.io/flathub-infra/flatpak-github-actions:freedesktop-25.08
       options: --privileged
     steps:
       - name: Check out source
@@ -44,6 +46,8 @@ jobs:
           upload-artifact: false
           arch: ${{ matrix.arch }}
           mirror-screenshots-url: https://dl.flathub.org/media
+          keep-build-dirs: true
+          cache: false
           cache-key: hatirlatici-flatpak-${{ matrix.arch }}-${{ github.sha }}
 
       - name: Lint build and repository
