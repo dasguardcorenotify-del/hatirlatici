@@ -16,9 +16,26 @@ jobs:
     env:
       QT_QPA_PLATFORM: offscreen
       PYTHONUNBUFFERED: '1'
+      CI_VENV: ${{ runner.temp }}/hatirlatici-quality-${{ github.run_id }}-${{ github.run_attempt }}
     steps:
       - name: Check out source
         uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+
+      - name: Verify that the test environment is outside the source tree
+        run: |
+          /usr/bin/python3 - <<'PYTHON'
+          import os
+          from pathlib import Path
+          workspace = Path(os.environ["GITHUB_WORKSPACE"]).resolve()
+          temporary = Path(os.environ["RUNNER_TEMP"]).resolve()
+          environment = Path(os.environ["CI_VENV"]).resolve()
+          if temporary not in environment.parents:
+              raise SystemExit("CI_VENV must be below RUNNER_TEMP")
+          if environment == workspace or workspace in environment.parents:
+              raise SystemExit("CI_VENV must be outside the source tree")
+          if environment.exists():
+              raise SystemExit("Refusing to overwrite an existing CI environment")
+          PYTHON
 
       - name: Install native libraries and create the test environment
         run: |
@@ -52,12 +69,12 @@ jobs:
             libxcb-xkb1 \
             python3-gi \
             python3-venv
-          /usr/bin/python3 -m venv --system-site-packages .ci-venv
-          .ci-venv/bin/python -m pip install --disable-pip-version-check --upgrade pip
-          .ci-venv/bin/python -m pip install --disable-pip-version-check \
+          /usr/bin/python3 -m venv --system-site-packages "$CI_VENV"
+          "$CI_VENV/bin/python" -m pip install --disable-pip-version-check --upgrade pip
+          "$CI_VENV/bin/python" -m pip install --disable-pip-version-check \
             'PyQt6==6.11.0' \
             'cryptography==50.0.0'
-          .ci-venv/bin/python - <<'PYTHON'
+          "$CI_VENV/bin/python" - <<'PYTHON'
           import gi
           gi.require_version("Gio", "2.0")
           from gi.repository import Gio, GLib
@@ -68,7 +85,7 @@ jobs:
           assert QtWidgets.QApplication is not None
           assert AESGCM is not None
           PYTHON
-          echo "$PWD/.ci-venv/bin" >> "$GITHUB_PATH"
+          echo "$CI_VENV/bin" >> "$GITHUB_PATH"
 
       - name: Compile Python sources
         run: python -m compileall -q *.py ui_v2 tests tools packaging/flatpak

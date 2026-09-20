@@ -4,7 +4,7 @@ Hatırlatıcı, Linux için yerel öncelikli bir hatırlatma uygulamasıdır. Ha
 
 2.0.0 sürümü İngilizce, Türkçe, Almanca, İspanyolca ve Rusça arayüzleri destekler.
 
-> Proje durumu (2026-09-19): dürüst yerel upstream geçmişi oluşturuldu. Bu aday Freedesktop 26.08'i hedefler; temiz x86_64 derlemesi, public upstream yayını, sürüm etiketi/varlıkları, aarch64 doğrulaması ve Flathub incelemesi henüz tamamlanmamıştır. Yapay zekâ yardımı [AI_ASSISTANCE_DISCLOSURE.md](AI_ASSISTANCE_DISCLOSURE.md) içinde, kaynak rekonstrüksiyonu [docs/PROVENANCE.md](docs/PROVENANCE.md) içinde açıklanmıştır.
+> Proje durumu (2026-09-20): açık GitHub deposu ve yerel x86_64/aarch64 CI yapılandırması oluşturuldu. İki mimaride kaynak derlemesi ve dışa aktarım tamamlandı; Quality ortamının konumu ve Flatpak doğrulama oturumu düzeltildikten sonra tüm CI kontrollerinin başarılı çalışması hâlâ gereklidir. Sürüm etiketi/varlıkları ve Flathub incelemesi henüz tamamlanmadı. Yapay zekâ yardımı [AI_ASSISTANCE_DISCLOSURE.md](AI_ASSISTANCE_DISCLOSURE.md) içinde, kaynak rekonstrüksiyonu [docs/PROVENANCE.md](docs/PROVENANCE.md) içinde açıklanmıştır.
 
 ## Özellikler
 
@@ -47,7 +47,7 @@ Yerel kaynak ağacında yalnızca geliştirme amacıyla `io.github.dasguardcoren
 
 ## Ekran görüntüleri
 
-Sentetik verilerle çekilmiş ve onaylanmış altı 2.0.0 ekran görüntüsü [`docs/screenshots`](docs/screenshots) dizinindedir. AppStream, bu dosyaların değişmez `v2.0.0` ham yollarını kullanır; bağlantılar yalnızca depo ve aynı sürüm etiketi yayımlandıktan sonra erişilebilir olacaktır. Yayın kapısı dosya adlarını, boyutları, SHA-256 özetlerini, URL'leri ve yerelleştirilmiş başlıkları sabitler.
+Sentetik verilerle çekilmiş ve onaylanmış altı 2.0.0 ekran görüntüsü [`docs/screenshots`](docs/screenshots) dizinindedir. AppStream, hareketli dal adresi yerine değişmez ve açık `f01d9a27420cb41fc7e782a8aea96f66d6a9bb28` commit'indeki dosyaları kullanır. Yayın kapısı dosya adlarını, boyutları, SHA-256 özetlerini, URL'leri ve yerelleştirilmiş başlıkları sabitler.
 
 ## Gizlilik, güvenlik ve destek
 

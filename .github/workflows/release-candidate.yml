@@ -36,6 +36,9 @@ jobs:
           ref: ${{ inputs.release_ref }}
           fetch-depth: 0
 
+      - name: Check isolated D-Bus session before the source build
+        run: dbus-run-session -- sh -ec 'test -n "$DBUS_SESSION_BUS_ADDRESS"'
+
       - name: Download the exact immutable release source
         run: |
           test "${{ inputs.release_ref }}" = v2.0.0
@@ -69,7 +72,7 @@ jobs:
 
       - name: Validate release candidate and checksums
         run: |
-          python3 packaging/flatpak/verify-built-flatpak.py \
+          dbus-run-session -- python3 packaging/flatpak/verify-built-flatpak.py \
             --manifest io.github.dasguardcorenotify_del.hatirlatici.yml \
             flatpak_app
           flatpak-builder-lint builddir flatpak_app

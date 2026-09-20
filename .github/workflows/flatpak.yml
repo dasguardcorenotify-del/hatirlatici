@@ -31,6 +31,9 @@ jobs:
       - name: Check out source
         uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
 
+      - name: Check isolated D-Bus session before the source build
+        run: dbus-run-session -- sh -ec 'test -n "$DBUS_SESSION_BUS_ADDRESS"'
+
       - name: Validate upstream metadata
         run: flatpak-builder-lint appstream packaging/flatpak/io.github.dasguardcorenotify_del.hatirlatici.metainfo.xml
 
@@ -52,7 +55,7 @@ jobs:
 
       - name: Lint build and repository
         run: |
-          python3 packaging/flatpak/verify-built-flatpak.py \
+          dbus-run-session -- python3 packaging/flatpak/verify-built-flatpak.py \
             --manifest io.github.dasguardcorenotify_del.hatirlatici.Devel.yml \
             flatpak_app
           flatpak-builder-lint builddir flatpak_app
