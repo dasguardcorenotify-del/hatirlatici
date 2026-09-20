@@ -32,10 +32,7 @@ PRODUCTION_MANIFEST = ROOT / f"{APP_ID}.yml"
 DEVELOPMENT_MANIFEST = ROOT / f"{APP_ID}.Devel.yml"
 METAINFO = ROOT / "packaging" / "flatpak" / f"{APP_ID}.metainfo.xml"
 DESKTOP = ROOT / "packaging" / "flatpak" / f"{APP_ID}.desktop"
-SCREENSHOT_BASE = (
-    "https://raw.githubusercontent.com/dasguardcorenotify-del/hatirlatici/"
-    f"{TAG}/docs/screenshots"
-)
+SCREENSHOT_BASE = "https://raw.githubusercontent.com/dasguardcorenotify-del/hatirlatici/f01d9a27420cb41fc7e782a8aea96f66d6a9bb28/docs/screenshots"
 SCREENSHOTS = (
     (
         "01-today-new-reminder.png",
@@ -524,7 +521,7 @@ def packaging_gate() -> None:
         '<control>keyboard</control>',
         '<control>pointing</control>',
         '<display_length compare="ge">768</display_length>',
-        '<url type="details">https://github.com/dasguardcorenotify-del/hatirlatici/releases/tag/v2.0.0</url>',
+        '<url type="details">https://github.com/dasguardcorenotify-del/hatirlatici/blob/f01d9a27420cb41fc7e782a8aea96f66d6a9bb28/docs/RELEASE_NOTES_2.0.0.md</url>',
     )
     for value in required_metadata:
         if value not in metadata:

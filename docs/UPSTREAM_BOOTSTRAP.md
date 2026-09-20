@@ -20,3 +20,7 @@ This packaging continuation migrates the candidate to Freedesktop 26.08, strengt
 ## F3-R3 source-build dependency closure
 
 Freedesktop 26.08 supplies Python 3.14. SIP 6.16.1 imports `packaging.markers` during the PyQt source build, so the official packaging 26.3 source distribution is pinned as a build-only module. Its license texts remain installed while the Python package itself is removed from the exported runtime.
+
+## Public bootstrap
+
+The public repository was bootstrapped from the verified local history. Screenshot metadata is pinned to immutable commit `f01d9a27420cb41fc7e782a8aea96f66d6a9bb28`. Native x86_64 and aarch64 CI must both pass before an immutable release tag is created.

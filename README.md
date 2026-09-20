@@ -4,7 +4,7 @@ Hatırlatıcı is a local-first reminder application for Linux. It schedules rem
 
 Version 2.0.0 supports English, Turkish, German, Spanish, and Russian.
 
-> Project status (2026-09-19): the honest local upstream history is established. This candidate targets Freedesktop 26.08; clean x86_64 build, public upstream publication, tagged release assets, aarch64 verification, and Flathub review remain open. AI assistance is disclosed in [AI_ASSISTANCE_DISCLOSURE.md](AI_ASSISTANCE_DISCLOSURE.md), and source history reconstruction is documented in [docs/PROVENANCE.md](docs/PROVENANCE.md).
+> Project status (2026-09-19): the honest upstream history and Freedesktop 26.08 x86_64 source build are established. Native x86_64/aarch64 public CI is configured; tagged release assets and Flathub review remain open. AI assistance is disclosed in [AI_ASSISTANCE_DISCLOSURE.md](AI_ASSISTANCE_DISCLOSURE.md), and source history reconstruction is documented in [docs/PROVENANCE.md](docs/PROVENANCE.md).
 
 ## Features
 
@@ -70,7 +70,7 @@ Read [PRIVACY.md](PRIVACY.md) for data handling and [SECURITY.md](SECURITY.md) f
 
 ## Screenshots
 
-Six approved version 2.0.0 screenshots captured with synthetic data are stored in [`docs/screenshots`](docs/screenshots). AppStream references their immutable `v2.0.0` raw paths; those URLs become reachable only after the repository and exact release tag are published. The release gate pins their filenames, dimensions, SHA-256 digests, URLs, and localized captions.
+Six approved version 2.0.0 screenshots captured with synthetic data are stored in [`docs/screenshots`](docs/screenshots). AppStream references an immutable, public bootstrap commit (`f01d9a27420cb41fc7e782a8aea96f66d6a9bb28`), avoiding a moving branch URL. The release gate pins their filenames, dimensions, SHA-256 digests, URLs, and localized captions.
 
 ## Support and donations
 

@@ -9,7 +9,7 @@ ROOT = Path(__file__).resolve().parent.parent
 APP_ID = "io.github.dasguardcorenotify_del.hatirlatici"
 SCREENSHOT_BASE = (
     "https://raw.githubusercontent.com/dasguardcorenotify-del/hatirlatici/"
-    "v2.0.0/docs/screenshots"
+    "f01d9a27420cb41fc7e782a8aea96f66d6a9bb28/docs/screenshots"
 )
 XML_LANG = "{http://www.w3.org/XML/1998/namespace}lang"
 SCREENSHOTS = (
@@ -95,7 +95,7 @@ class PackagingReleaseTests(unittest.TestCase):
         self.assertEqual(release.attrib, {"version": "2.0.0", "date": "2026-08-21"})
         self.assertEqual(
             release.findtext("url[@type='details']"),
-            "https://github.com/dasguardcorenotify-del/hatirlatici/releases/tag/v2.0.0",
+            "https://github.com/dasguardcorenotify-del/hatirlatici/blob/f01d9a27420cb41fc7e782a8aea96f66d6a9bb28/docs/RELEASE_NOTES_2.0.0.md",
         )
         branding = component.find("branding")
         self.assertIsNotNone(branding)

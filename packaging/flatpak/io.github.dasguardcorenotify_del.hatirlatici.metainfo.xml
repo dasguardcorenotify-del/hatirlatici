@@ -70,7 +70,7 @@
 
   <screenshots>
     <screenshot type="default">
-      <image type="source" width="1000" height="700">https://raw.githubusercontent.com/dasguardcorenotify-del/hatirlatici/v2.0.0/docs/screenshots/01-today-new-reminder.png</image>
+      <image type="source" width="1000" height="700">https://raw.githubusercontent.com/dasguardcorenotify-del/hatirlatici/f01d9a27420cb41fc7e782a8aea96f66d6a9bb28/docs/screenshots/01-today-new-reminder.png</image>
       <caption>Create a reminder from the Today view</caption>
       <caption xml:lang="tr">Bugün görünümünde yeni hatırlatıcı oluşturma</caption>
       <caption xml:lang="de">Eine Erinnerung in der Heute-Ansicht erstellen</caption>
@@ -78,7 +78,7 @@
       <caption xml:lang="ru">Создание напоминания в представлении «Сегодня»</caption>
     </screenshot>
     <screenshot>
-      <image type="source" width="1000" height="700">https://raw.githubusercontent.com/dasguardcorenotify-del/hatirlatici/v2.0.0/docs/screenshots/02-reminder-list.png</image>
+      <image type="source" width="1000" height="700">https://raw.githubusercontent.com/dasguardcorenotify-del/hatirlatici/f01d9a27420cb41fc7e782a8aea96f66d6a9bb28/docs/screenshots/02-reminder-list.png</image>
       <caption>Review scheduled reminders in the list</caption>
       <caption xml:lang="tr">Planlanmış hatırlatıcıları listede gözden geçirme</caption>
       <caption xml:lang="de">Geplante Erinnerungen in der Liste prüfen</caption>
@@ -86,7 +86,7 @@
       <caption xml:lang="ru">Просмотр запланированных напоминаний в списке</caption>
     </screenshot>
     <screenshot>
-      <image type="source" width="1000" height="700">https://raw.githubusercontent.com/dasguardcorenotify-del/hatirlatici/v2.0.0/docs/screenshots/03-history.png</image>
+      <image type="source" width="1000" height="700">https://raw.githubusercontent.com/dasguardcorenotify-del/hatirlatici/f01d9a27420cb41fc7e782a8aea96f66d6a9bb28/docs/screenshots/03-history.png</image>
       <caption>Review reminder delivery history</caption>
       <caption xml:lang="tr">Hatırlatıcı teslim geçmişini gözden geçirme</caption>
       <caption xml:lang="de">Den Zustellverlauf der Erinnerungen prüfen</caption>
@@ -94,7 +94,7 @@
       <caption xml:lang="ru">Просмотр истории доставки напоминаний</caption>
     </screenshot>
     <screenshot>
-      <image type="source" width="1000" height="700">https://raw.githubusercontent.com/dasguardcorenotify-del/hatirlatici/v2.0.0/docs/screenshots/04-settings-local-security.png</image>
+      <image type="source" width="1000" height="700">https://raw.githubusercontent.com/dasguardcorenotify-del/hatirlatici/f01d9a27420cb41fc7e782a8aea96f66d6a9bb28/docs/screenshots/04-settings-local-security.png</image>
       <caption>Configure language, delivery, and local security settings</caption>
       <caption xml:lang="tr">Dil, teslimat ve yerel güvenlik ayarlarını yapılandırma</caption>
       <caption xml:lang="de">Sprache, Zustellung und lokale Sicherheit konfigurieren</caption>
@@ -102,7 +102,7 @@
       <caption xml:lang="ru">Настройка языка, доставки и локальной безопасности</caption>
     </screenshot>
     <screenshot>
-      <image type="source" width="980" height="730">https://raw.githubusercontent.com/dasguardcorenotify-del/hatirlatici/v2.0.0/docs/screenshots/05-first-run-gmail-guide.png</image>
+      <image type="source" width="980" height="730">https://raw.githubusercontent.com/dasguardcorenotify-del/hatirlatici/f01d9a27420cb41fc7e782a8aea96f66d6a9bb28/docs/screenshots/05-first-run-gmail-guide.png</image>
       <caption>Follow the first-run Gmail App Password guide</caption>
       <caption xml:lang="tr">İlk çalıştırmada Gmail Uygulama Şifresi rehberini izleme</caption>
       <caption xml:lang="de">Der Anleitung für Gmail-App-Passwörter beim ersten Start folgen</caption>
@@ -110,7 +110,7 @@
       <caption xml:lang="ru">Руководство по паролю приложения Gmail при первом запуске</caption>
     </screenshot>
     <screenshot>
-      <image type="source" width="1000" height="700">https://raw.githubusercontent.com/dasguardcorenotify-del/hatirlatici/v2.0.0/docs/screenshots/06-support-and-language.png</image>
+      <image type="source" width="1000" height="700">https://raw.githubusercontent.com/dasguardcorenotify-del/hatirlatici/f01d9a27420cb41fc7e782a8aea96f66d6a9bb28/docs/screenshots/06-support-and-language.png</image>
       <caption>Access About, privacy, issue-reporting, and support options</caption>
       <caption xml:lang="tr">Hakkında, gizlilik, sorun bildirme ve destek seçeneklerine erişme</caption>
       <caption xml:lang="de">Info, Datenschutz, Fehlerberichte und Support aufrufen</caption>
@@ -128,7 +128,7 @@
 
   <releases>
     <release version="2.0.0" date="2026-08-21">
-      <url type="details">https://github.com/dasguardcorenotify-del/hatirlatici/releases/tag/v2.0.0</url>
+      <url type="details">https://github.com/dasguardcorenotify-del/hatirlatici/blob/f01d9a27420cb41fc7e782a8aea96f66d6a9bb28/docs/RELEASE_NOTES_2.0.0.md</url>
       <description>
         <p>First public Linux release with local reminders, desktop notifications, optional SMTP delivery, secure local credential storage, and five interface languages.</p>
         <p>The Flatpak uses the Freedesktop 26.08 runtime with pinned source builds of Qt 6.11.1 and PyQt6.</p>

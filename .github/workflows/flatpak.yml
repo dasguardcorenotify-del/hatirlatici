@@ -11,8 +11,17 @@ permissions:
 
 jobs:
   source-build:
-    runs-on: ubuntu-24.04
-    timeout-minutes: 300
+    name: source-build (${{ matrix.arch }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: x86_64
+            runner: ubuntu-24.04
+          - arch: aarch64
+            runner: ubuntu-24.04-arm
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 360
     container:
       image: ghcr.io/flathub-infra/flatpak-github-actions:freedesktop-26.08
       options: --privileged
@@ -30,20 +39,17 @@ jobs:
         uses: flatpak/flatpak-github-actions/flatpak-builder@d6f00ee69d6c8a7f875ec233e9a8ffea74c6ccef # v6
         with:
           manifest-path: io.github.dasguardcorenotify_del.hatirlatici.Devel.yml
-          bundle: hatirlatici-ci.flatpak
-          build-bundle: true
+          bundle: hatirlatici-ci-${{ matrix.arch }}.flatpak
+          build-bundle: false
           upload-artifact: false
-          cache-key: hatirlatici-flatpak-${{ github.sha }}
+          arch: ${{ matrix.arch }}
+          mirror-screenshots-url: https://dl.flathub.org/media
+          cache-key: hatirlatici-flatpak-${{ matrix.arch }}-${{ github.sha }}
 
       - name: Lint build and repository
         run: |
-          # qtbase-client-only-contract verifies the generated header during the
-          # build; the verifier rechecks its installed attestation and artifacts.
           python3 packaging/flatpak/verify-built-flatpak.py \
             --manifest io.github.dasguardcorenotify_del.hatirlatici.Devel.yml \
             flatpak_app
           flatpak-builder-lint builddir flatpak_app
           flatpak-builder-lint repo repo
-
-      - name: Record CI artifact checksum
-        run: sha256sum hatirlatici-ci.flatpak

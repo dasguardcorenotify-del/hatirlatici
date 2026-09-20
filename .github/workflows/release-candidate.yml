@@ -13,8 +13,17 @@ permissions:
 
 jobs:
   verify-production-source:
-    runs-on: ubuntu-24.04
-    timeout-minutes: 300
+    name: verify-production-source (${{ matrix.arch }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: x86_64
+            runner: ubuntu-24.04
+          - arch: aarch64
+            runner: ubuntu-24.04-arm
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 360
     container:
       image: ghcr.io/flathub-infra/flatpak-github-actions:freedesktop-26.08
       options: --privileged
@@ -47,15 +56,15 @@ jobs:
         uses: flatpak/flatpak-github-actions/flatpak-builder@d6f00ee69d6c8a7f875ec233e9a8ffea74c6ccef # v6
         with:
           manifest-path: io.github.dasguardcorenotify_del.hatirlatici.yml
-          bundle: hatirlatici-2.0.0.flatpak
+          bundle: hatirlatici-2.0.0-${{ matrix.arch }}.flatpak
           build-bundle: true
           upload-artifact: false
-          cache-key: hatirlatici-release-v2.0.0-${{ github.sha }}
+          arch: ${{ matrix.arch }}
+          mirror-screenshots-url: https://dl.flathub.org/media
+          cache-key: hatirlatici-release-v2.0.0-${{ matrix.arch }}-${{ github.sha }}
 
       - name: Validate release candidate and checksums
         run: |
-          # qtbase-client-only-contract verifies the generated header during the
-          # build; the verifier rechecks its installed attestation and artifacts.
           python3 packaging/flatpak/verify-built-flatpak.py \
             --manifest io.github.dasguardcorenotify_del.hatirlatici.yml \
             flatpak_app
@@ -64,16 +73,16 @@ jobs:
           cp /tmp/hatirlatici-2.0.0.tar.xz .
           sha256sum \
             hatirlatici-2.0.0.tar.xz \
-            hatirlatici-2.0.0.flatpak \
+            hatirlatici-2.0.0-${{ matrix.arch }}.flatpak \
             io.github.dasguardcorenotify_del.hatirlatici.yml > SHA256SUMS
 
       - name: Upload unsigned release candidate for owner review
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
-          name: hatirlatici-2.0.0-release-candidate
+          name: hatirlatici-2.0.0-release-candidate-${{ matrix.arch }}
           path: |
             hatirlatici-2.0.0.tar.xz
-            hatirlatici-2.0.0.flatpak
+            hatirlatici-2.0.0-${{ matrix.arch }}.flatpak
             io.github.dasguardcorenotify_del.hatirlatici.yml
             SHA256SUMS
           if-no-files-found: error
