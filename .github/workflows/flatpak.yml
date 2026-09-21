@@ -37,7 +37,20 @@ jobs:
       - name: Lint canonical production manifest
         run: flatpak-builder-lint manifest io.github.dasguardcorenotify_del.hatirlatici.yml
 
+      - name: Check Platform sandbox before the source build
+        run: |
+          flatpak install --noninteractive --assumeyes flathub \
+            org.freedesktop.Platform//26.08 org.freedesktop.Sdk//26.08
+          probe_dir=$(mktemp -d)
+          trap 'rm -rf "$probe_dir"' EXIT
+          flatpak build-init "$probe_dir/app" \
+            io.github.dasguardcorenotify_del.hatirlatici \
+            org.freedesktop.Sdk org.freedesktop.Platform 26.08
+          flatpak build --runtime --readonly --unshare=network --die-with-parent \
+            "$probe_dir/app" /usr/bin/python3 -c 'print("FLATPAK_RUNTIME_PREFLIGHT=PASS")'
+
       - name: Build checkout with development manifest
+        id: build
         uses: flatpak/flatpak-github-actions/flatpak-builder@d6f00ee69d6c8a7f875ec233e9a8ffea74c6ccef # v6
         with:
           manifest-path: io.github.dasguardcorenotify_del.hatirlatici.Devel.yml
@@ -50,10 +63,12 @@ jobs:
           cache: false
           cache-key: hatirlatici-flatpak-${{ matrix.arch }}-${{ github.sha }}
 
+      - name: Verify exported runtime
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
+        run: python3 packaging/flatpak/verify-built-flatpak.py --runtime-smoke flatpak_app
+
       - name: Lint build and repository
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
         run: |
-          python3 packaging/flatpak/verify-built-flatpak.py \
-            --manifest io.github.dasguardcorenotify_del.hatirlatici.Devel.yml \
-            flatpak_app
           flatpak-builder-lint builddir flatpak_app
           flatpak-builder-lint repo repo

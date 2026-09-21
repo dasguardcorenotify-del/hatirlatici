@@ -20,6 +20,27 @@ jobs:
       - name: Check out source
         uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
 
+      - name: Verify that the test environment is outside the source tree
+        run: |
+          /usr/bin/python3 - <<'PYTHON'
+          import os
+          from pathlib import Path
+          workspace = Path(os.environ["GITHUB_WORKSPACE"]).resolve()
+          temporary = Path(os.environ["RUNNER_TEMP"]).resolve()
+          environment = (temporary / (
+              "hatirlatici-quality-" + os.environ["GITHUB_RUN_ID"]
+              + "-" + os.environ["GITHUB_RUN_ATTEMPT"]
+          )).resolve()
+          if temporary not in environment.parents:
+              raise SystemExit("CI_VENV must be below RUNNER_TEMP")
+          if environment == workspace or workspace in environment.parents:
+              raise SystemExit("CI_VENV must be outside the source tree")
+          if environment.exists():
+              raise SystemExit("Refusing to overwrite an existing CI environment")
+          with open(os.environ["GITHUB_ENV"], "a", encoding="utf-8") as target:
+              print(f"CI_VENV={environment}", file=target)
+          PYTHON
+
       - name: Install native libraries and create the test environment
         run: |
           sudo apt-get update
@@ -52,12 +73,12 @@ jobs:
             libxcb-xkb1 \
             python3-gi \
             python3-venv
-          /usr/bin/python3 -m venv --system-site-packages .ci-venv
-          .ci-venv/bin/python -m pip install --disable-pip-version-check --upgrade pip
-          .ci-venv/bin/python -m pip install --disable-pip-version-check \
+          /usr/bin/python3 -m venv --system-site-packages "$CI_VENV"
+          "$CI_VENV/bin/python" -m pip install --disable-pip-version-check --upgrade pip
+          "$CI_VENV/bin/python" -m pip install --disable-pip-version-check \
             'PyQt6==6.11.0' \
             'cryptography==50.0.0'
-          .ci-venv/bin/python - <<'PYTHON'
+          "$CI_VENV/bin/python" - <<'PYTHON'
           import gi
           gi.require_version("Gio", "2.0")
           from gi.repository import Gio, GLib
@@ -68,7 +89,7 @@ jobs:
           assert QtWidgets.QApplication is not None
           assert AESGCM is not None
           PYTHON
-          echo "$PWD/.ci-venv/bin" >> "$GITHUB_PATH"
+          echo "$CI_VENV/bin" >> "$GITHUB_PATH"
 
       - name: Compile Python sources
         run: python -m compileall -q *.py ui_v2 tests tools packaging/flatpak
@@ -91,7 +112,7 @@ jobs:
           result = unittest.TextTestRunner(verbosity=2).run(suite)
           print(f"QUALITY_TEST_COUNT={discovered}")
           print(f"QUALITY_TESTS_RUN={result.testsRun}")
-          passed = result.wasSuccessful() and discovered == 218 and result.testsRun == 218
+          passed = result.wasSuccessful() and discovered == 222 and result.testsRun == 222
           raise SystemExit(0 if passed else 1)
           PYTHON
 
