@@ -15,7 +15,18 @@ from pathlib import Path
 
 APP_ID = "io.github.dasguardcorenotify_del.hatirlatici"
 ROOT = Path(__file__).resolve().parents[2]
-RUNTIME_SMOKE = r'''import cairo
+RUNTIME_SMOKE_MARKER = "BUILT_RUNTIME_SMOKE=PASS"
+RUNTIME_SMOKE = r'''import sys
+
+# Match the public launcher's installed module paths, without SDK build env.
+python_version = f"{sys.version_info.major}.{sys.version_info.minor}"
+sys.path[:0] = [
+    "/app/lib/hatirlatici",
+    "/app/lib/hatirlatici/ui_v2",
+    f"/app/lib/python{python_version}/site-packages",
+]
+
+import cairo
 import cffi
 import gi
 gi.require_version("Gio", "2.0")
@@ -482,10 +493,57 @@ def verify(build_dir: Path) -> list[str]:
     return errors
 
 
+def verify_runtime_smoke(build_dir: Path) -> list[str]:
+    # flatpak-builder --run re-enters its build cache through rofiles-fuse.
+    # In the Flathub Actions image that helper invokes flatpak-spawn --host,
+    # but a Docker job has no org.freedesktop.Flatpak host service. Run the
+    # finished tree directly, using the shipped Platform rather than the SDK.
+    # --readonly protects exported files; no application permissions change.
+    command = (
+        "flatpak",
+        "build",
+        "--runtime",
+        "--readonly",
+        "--unshare=network",
+        "--die-with-parent",
+        str(build_dir),
+        "env",
+        "QT_QPA_PLATFORM=offscreen",
+        "LD_LIBRARY_PATH=/app/lib",
+        "XDG_CONFIG_HOME=/tmp/hatirlatici-smoke-config",
+        "XDG_DATA_HOME=/tmp/hatirlatici-smoke-data",
+        "XDG_CACHE_HOME=/tmp/hatirlatici-smoke-cache",
+        "XDG_STATE_HOME=/tmp/hatirlatici-smoke-state",
+        "HOME=/tmp/hatirlatici-smoke-home",
+        "TMPDIR=/tmp/hatirlatici-smoke-tmp",
+        "PYTHONNOUSERSITE=1",
+        "PYTHONDONTWRITEBYTECODE=1",
+        "PYTHONPATH=/app/lib/hatirlatici",
+        "/usr/bin/python3",
+        "-c",
+        RUNTIME_SMOKE,
+    )
+    try:
+        result = subprocess.run(
+            command, text=True, capture_output=True, check=False, timeout=120
+        )
+    except (OSError, subprocess.TimeoutExpired) as error:
+        return [f"isolated runtime/SVG smoke could not complete: {error}"]
+    if result.returncode:
+        return [f"isolated runtime/SVG smoke failed:\n{result.stdout}\n{result.stderr}"]
+    if not any(line.startswith(RUNTIME_SMOKE_MARKER + " ") for line in result.stdout.splitlines()):
+        return [f"isolated runtime/SVG smoke returned no success marker:\n{result.stdout}\n{result.stderr}"]
+    print(result.stdout.strip())
+    return []
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("build_dir", type=Path)
-    parser.add_argument("--manifest", type=Path, help="also run isolated PyQt/SVG rendering smoke test")
+    parser.add_argument(
+        "--runtime-smoke", action="store_true",
+        help="also exercise the exported native dependencies in the read-only Platform sandbox",
+    )
     parser.add_argument(
         "--builder-state",
         type=Path,
@@ -496,31 +554,8 @@ def main() -> int:
     errors = verify(build_dir)
     if args.builder_state is not None:
         errors.extend(verify_qtbase_builder_state(args.builder_state.resolve()))
-    if not errors and args.manifest is not None:
-        command = (
-            "flatpak-builder",
-            "--run",
-            str(build_dir),
-            str(args.manifest.resolve()),
-            "env",
-            "QT_QPA_PLATFORM=offscreen",
-            "XDG_CONFIG_HOME=/tmp/hatirlatici-smoke-config",
-            "XDG_DATA_HOME=/tmp/hatirlatici-smoke-data",
-            "XDG_CACHE_HOME=/tmp/hatirlatici-smoke-cache",
-            "XDG_STATE_HOME=/tmp/hatirlatici-smoke-state",
-            "HOME=/tmp/hatirlatici-smoke-home",
-            "TMPDIR=/tmp/hatirlatici-smoke-tmp",
-            "PYTHONNOUSERSITE=1",
-            "PYTHONPATH=/app/lib/hatirlatici",
-            "python3",
-            "-c",
-            RUNTIME_SMOKE,
-        )
-        result = subprocess.run(command, text=True, capture_output=True, check=False)
-        if result.returncode:
-            errors.append(f"isolated runtime/SVG smoke failed:\n{result.stdout}\n{result.stderr}")
-        else:
-            print(result.stdout.strip())
+    if not errors and args.runtime_smoke:
+        errors.extend(verify_runtime_smoke(build_dir))
     if errors:
         print("BUILT_FLATPAK_GATE=FAIL", file=sys.stderr)
         for error in errors:

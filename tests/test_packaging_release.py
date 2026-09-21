@@ -1,7 +1,11 @@
 import json
+import contextlib
+import io
 import re
 import runpy
+import subprocess
 import unittest
+from unittest import mock
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
@@ -245,10 +249,49 @@ class PackagingReleaseTests(unittest.TestCase):
         self.assertIn('if environment == workspace or workspace in environment.parents:', quality)
         self.assertIn('if environment.exists():', quality)
         self.assertIn('PYTHONPATH="$PWD:$PWD/ui_v2"', quality)
-        self.assertIn('discovered == 218', quality)
-        self.assertIn('result.testsRun == 218', quality)
+        self.assertIn('discovered == 222', quality)
+        self.assertIn('result.testsRun == 222', quality)
         self.assertIn('libopengl0', quality)
         self.assertIn('libxcb-xkb1', quality)
+
+    def _runtime_smoke(self):
+        verifier = runpy.run_path(str(ROOT / "packaging/flatpak/verify-built-flatpak.py"))
+        return verifier["verify_runtime_smoke"]
+
+    def test_runtime_smoke_uses_readonly_platform_and_requires_marker(self):
+        smoke = self._runtime_smoke()
+        result = subprocess.CompletedProcess([], 0, "BUILT_RUNTIME_SMOKE=PASS exercised\n", "")
+        with mock.patch("subprocess.run", return_value=result) as run, contextlib.redirect_stdout(io.StringIO()):
+            self.assertEqual(smoke(Path("/tmp/exported app")), [])
+        command = run.call_args.args[0]
+        self.assertEqual(command[:2], ("flatpak", "build"))
+        for argument in ("--runtime", "--readonly", "--unshare=network", "--die-with-parent"):
+            self.assertIn(argument, command)
+        self.assertIn("/tmp/exported app", command)
+        self.assertNotIn("flatpak-builder", command)
+        self.assertEqual(run.call_args.kwargs["timeout"], 120)
+
+    def test_runtime_smoke_fails_even_if_failed_process_prints_pass(self):
+        result = subprocess.CompletedProcess([], 1, "BUILT_RUNTIME_SMOKE=PASS exercised\n", "plugin load failed")
+        with mock.patch("subprocess.run", return_value=result):
+            errors = self._runtime_smoke()(Path("/tmp/build"))
+        self.assertTrue(errors)
+        self.assertIn("plugin load failed", errors[0])
+
+    def test_runtime_smoke_rejects_zero_exit_without_success_marker(self):
+        result = subprocess.CompletedProcess([], 0, "unrelated output\n", "")
+        with mock.patch("subprocess.run", return_value=result):
+            errors = self._runtime_smoke()(Path("/tmp/build"))
+        self.assertTrue(errors)
+        self.assertIn("no success marker", errors[0])
+
+    def test_runtime_smoke_reports_missing_runner_and_timeout(self):
+        for failure in (FileNotFoundError("flatpak"), subprocess.TimeoutExpired("flatpak", 120)):
+            with self.subTest(failure=type(failure).__name__):
+                with mock.patch("subprocess.run", side_effect=failure):
+                    errors = self._runtime_smoke()(Path("/tmp/build"))
+                self.assertTrue(errors)
+                self.assertIn("could not complete", errors[0])
 
     def test_desktop_identity(self):
         desktop = (ROOT / "packaging" / "flatpak" / f"{APP_ID}.desktop").read_text(encoding="utf-8")

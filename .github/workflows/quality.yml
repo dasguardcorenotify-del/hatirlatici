@@ -112,7 +112,7 @@ jobs:
           result = unittest.TextTestRunner(verbosity=2).run(suite)
           print(f"QUALITY_TEST_COUNT={discovered}")
           print(f"QUALITY_TESTS_RUN={result.testsRun}")
-          passed = result.wasSuccessful() and discovered == 218 and result.testsRun == 218
+          passed = result.wasSuccessful() and discovered == 222 and result.testsRun == 222
           raise SystemExit(0 if passed else 1)
           PYTHON
 

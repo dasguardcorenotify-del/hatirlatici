@@ -4,7 +4,7 @@ Hatırlatıcı, Linux için yerel öncelikli bir hatırlatma uygulamasıdır. Ha
 
 2.0.0 sürümü İngilizce, Türkçe, Almanca, İspanyolca ve Rusça arayüzleri destekler.
 
-> Proje durumu (2026-09-20): açık GitHub deposu ve yerel x86_64/aarch64 CI yapılandırması oluşturuldu. İki mimaride kaynak derlemesi ve dışa aktarım tamamlandı; Quality ortamının konumu ve Flatpak doğrulama oturumu düzeltildikten sonra tüm CI kontrollerinin başarılı çalışması hâlâ gereklidir. Sürüm etiketi/varlıkları ve Flathub incelemesi henüz tamamlanmadı. Yapay zekâ yardımı [AI_ASSISTANCE_DISCLOSURE.md](AI_ASSISTANCE_DISCLOSURE.md) içinde, kaynak rekonstrüksiyonu [docs/PROVENANCE.md](docs/PROVENANCE.md) içinde açıklanmıştır.
+> Proje durumu (2026-09-21): Quality kontrolünde mevcut 218 test başarılı oldu. Yerel x86_64/aarch64 derlemeleri ve dışa aktarım tamamlandı; derleme sonrası çalıştırma doğrulaması CI konteynerinde başarısız oldu. Doğrudan, salt okunur Platform kontrolü ve dört regresyon testi doğrulanıyor. Sürüm etiketi/varlıkları ve Flathub yayını henüz tamamlanmadı. Yapay zekâ yardımı [AI_ASSISTANCE_DISCLOSURE.md](AI_ASSISTANCE_DISCLOSURE.md) içinde, kaynak rekonstrüksiyonu [docs/PROVENANCE.md](docs/PROVENANCE.md) içinde açıklanmıştır.
 
 ## Özellikler
 

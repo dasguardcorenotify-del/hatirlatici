@@ -36,9 +36,6 @@ jobs:
           ref: ${{ inputs.release_ref }}
           fetch-depth: 0
 
-      - name: Check isolated D-Bus session before the source build
-        run: dbus-run-session -- sh -ec 'test -n "$DBUS_SESSION_BUS_ADDRESS"'
-
       - name: Download the exact immutable release source
         run: |
           test "${{ inputs.release_ref }}" = v2.0.0
@@ -57,7 +54,20 @@ jobs:
           flatpak-builder-lint manifest io.github.dasguardcorenotify_del.hatirlatici.yml
           flatpak-builder-lint appstream packaging/flatpak/io.github.dasguardcorenotify_del.hatirlatici.metainfo.xml
 
+      - name: Check Platform sandbox before the source build
+        run: |
+          flatpak install --noninteractive --assumeyes flathub \
+            org.freedesktop.Platform//26.08 org.freedesktop.Sdk//26.08
+          probe_dir=$(mktemp -d)
+          trap 'rm -rf "$probe_dir"' EXIT
+          flatpak build-init "$probe_dir/app" \
+            io.github.dasguardcorenotify_del.hatirlatici \
+            org.freedesktop.Sdk org.freedesktop.Platform 26.08
+          flatpak build --runtime --readonly --unshare=network --die-with-parent \
+            "$probe_dir/app" /usr/bin/python3 -c 'print("FLATPAK_RUNTIME_PREFLIGHT=PASS")'
+
       - name: Build immutable production source
+        id: build
         uses: flatpak/flatpak-github-actions/flatpak-builder@d6f00ee69d6c8a7f875ec233e9a8ffea74c6ccef # v6
         with:
           manifest-path: io.github.dasguardcorenotify_del.hatirlatici.yml
@@ -70,13 +80,18 @@ jobs:
           cache: false
           cache-key: hatirlatici-release-v2.0.0-${{ matrix.arch }}-${{ github.sha }}
 
-      - name: Validate release candidate and checksums
+      - name: Verify exported runtime
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
+        run: python3 packaging/flatpak/verify-built-flatpak.py --runtime-smoke flatpak_app
+
+      - name: Lint build and repository
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
         run: |
-          dbus-run-session -- python3 packaging/flatpak/verify-built-flatpak.py \
-            --manifest io.github.dasguardcorenotify_del.hatirlatici.yml \
-            flatpak_app
           flatpak-builder-lint builddir flatpak_app
           flatpak-builder-lint repo repo
+
+      - name: Prepare verified candidate checksums
+        run: |
           cp /tmp/hatirlatici-2.0.0.tar.xz .
           sha256sum \
             hatirlatici-2.0.0.tar.xz \
